@@ -97,6 +97,10 @@ function rotateFace(face, angle, layersCount = 1) {
             isRotating = false;
             if (!isUndoing) {
                 moveHistory.push({ face, angle, layersCount });
+                // Check if the cube is solved (only for non-undo moves).
+                if (checkCubeSolved()) {
+                    console.log("Cube solved!");
+                }
             }
             // Process pending undo actions with priority over normal rotations.
             if (undoQueue.length > 0) {
@@ -115,6 +119,15 @@ function rotateFace(face, angle, layersCount = 1) {
         }
     }
     requestAnimationFrame(animateRotation);
+}
+
+// New helper to check if the cube is solved.
+// You can replace the content of this function with your own solved-state logic.
+function checkCubeSolved() {
+    // Implement your solved check logic here.
+    console.log('Checking if cube is solved...');
+    // For demonstration, this stub always returns false.
+    return false;
 }
 
 // Key event handler for hotkeys
