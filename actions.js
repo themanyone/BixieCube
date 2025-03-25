@@ -298,7 +298,10 @@ renderer.domElement.addEventListener('mouseup', (event) => {
             const v2 = { x: dragEnd.x - faceCenterScreen.x,   y: dragEnd.y - faceCenterScreen.y };
             // Use the z-component of the cross product to decide rotation direction.
             const cross = v1.x * v2.y - v1.y * v2.x;
-            const angle = cross > 0 ? -Math.PI / 2 : Math.PI / 2;
+            let angle = cross > 0 ? -Math.PI / 2 : Math.PI / 2;
+            if (selectedFace === 'bottom' || selectedFace === 'left' || selectedFace === 'back') {
+                angle = -angle;
+            }
             rotateFace(selectedFace, angle, currentLayers);
         }
     }
