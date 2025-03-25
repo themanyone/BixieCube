@@ -154,6 +154,17 @@ function buildCube() {
     }
 }
 
+// New function to update the cubies' bevel based on the current value
+function updateCubeBevel(newBevel) {
+    bevel = newBevel;
+    rubyCube.children.forEach(cubie => {
+        if (cubie.geometry) {
+            cubie.geometry.dispose();
+        }
+        cubie.geometry = new RoundedBoxGeometry(cubieSize, cubieSize, cubieSize, 2, cubieSize * bevel);
+    });
+}
+
 // New function to update the cubies' positions based on the current gap
 function updateCubePositions(gap) {
     const currentOffset = ((numPerAxis - 1) * (cubieSize + gap)) / 2;
@@ -257,7 +268,7 @@ configPopover.innerHTML = `
     <h3>Configuration Options</h3>
     <p>Adjust settings as needed.</p>
     <p><strong>Gap:</strong> <input type="range" id="gapSize" min="0" max="1.0" step="0.01" value="${gap}" /></p>
-    <p><strong>Bevel:</strong> <input type="range" id="bevelInput" min="0.0" max="0.4" step="0.05" value="${bevel}" /></p>
+    <p><strong>Bevel:</strong> <input type="range" id="bevelInput" min="0.0" max="0.5" step="0.05" value="${bevel}" /></p>
     <p><strong>Number per Axis:</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /></p>
     <p><button id="resetCube">Reset Cube</button></p>
     <hr>
