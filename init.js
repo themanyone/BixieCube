@@ -203,7 +203,7 @@ popover.innerHTML = `
     <p>Click the hamburger icon to show/hide this popover.</p>
     <p>Click anywhere outside the popover to close it.</p>
     <hr>
-    <p><strong>Project Info:</strong> RubyCube</p>
+    <p><strong>Project Info:</strong> RubyCubie</p>
     <p><strong>Updates:</strong> v1.0 - initial release</p>
 `;
 document.body.appendChild(popover);
