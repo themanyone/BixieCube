@@ -144,3 +144,51 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
+
+// Create hamburger icon element
+const hamburger = document.createElement('div');
+hamburger.innerHTML = '&#9776;'; // Unicode hamburger icon
+hamburger.style.position = 'fixed';
+hamburger.style.top = '20px';
+hamburger.style.left = '20px';
+hamburger.style.fontSize = '30px';
+hamburger.style.cursor = 'pointer';
+hamburger.style.zIndex = '1000';
+hamburger.style.color = 'white';
+document.body.appendChild(hamburger);
+
+// Create popover element
+const popover = document.createElement('div');
+popover.style.position = 'fixed';
+popover.style.top = '60px';
+popover.style.left = '20px';
+popover.style.padding = '20px';
+popover.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Transparent background
+popover.style.borderRadius = '8px';
+popover.style.color = 'white';
+popover.style.fontSize = '14px';
+popover.style.display = 'none';
+popover.style.zIndex = '1000';
+popover.innerHTML = `
+    <h3>Keyboard Help</h3>
+    <p>Right-click: Move camera</p>
+    <p>Click or drag to rotate scene</p>
+    <p>abcdf - Rotate face clockwise</p>
+    <p>ABCDF - Rotate face counterclockwise</p>
+    <p>2a 3b - Rotate face + layers</p>
+    <p>z - undo last move</p>
+    <p>r - redo last move</p>
+    <p>Space - Shuffle cube</p>
+    <p>Enter - Solve cube</p>
+    <p>Click the hamburger icon to show/hide this popover.</p>
+    <p>Click anywhere outside the popover to close it.</p>
+    <hr>
+    <p><strong>Project Info:</strong> RubyCube</p>
+    <p><strong>Updates:</strong> v1.0 - initial release</p>
+`;
+document.body.appendChild(popover);
+
+// Toggle popover on hamburger click
+hamburger.addEventListener('click', () => {
+    popover.style.display = (popover.style.display === 'none') ? 'block' : 'none';
+});
