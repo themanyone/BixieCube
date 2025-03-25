@@ -65,8 +65,9 @@ scene.add(rubyCube);
 
 // Parameters for a Rubik's cube
 export let cubieSize = 1;
+export let bevel = 0.1;
 export let gap = 0.05;
-// Change this value between 3 and 9 as desired.
+// Change this value between 2 and 9 as desired.
 export let numPerAxis = 5;
 export const getOffset = () => ((numPerAxis - 1) * (cubieSize + gap)) / 2;
 
@@ -100,7 +101,7 @@ function buildCube() {
     for (let i = 0; i < numPerAxis; i++) {
         for (let j = 0; j < numPerAxis; j++) {
             for (let k = 0; k < numPerAxis; k++) {
-                const geometry = new RoundedBoxGeometry(cubieSize, cubieSize, cubieSize, 2, cubieSize * 0.1);
+                const geometry = new RoundedBoxGeometry(cubieSize, cubieSize, cubieSize, 2, cubieSize * bevel);
                 const materials = geometry.groups.map(() => defaultMaterial);
                 const x = i * (cubieSize + gap) - currentOffset;
                 const y = j * (cubieSize + gap) - currentOffset;
@@ -240,8 +241,8 @@ configPopover.style.zIndex = '1000';
 configPopover.innerHTML = `
     <h3>Configuration Options</h3>
     <p>Adjust settings as needed.</p>
-    <p><strong>Gap:</strong> <input type="range" min="0" max="0.2" step="0.01" value="${gap}" /></p>
-    <p><strong>Cubie Size:</strong> <input type="range" min="0.9" max="1.1" step="0.1" value="${cubieSize}" /></p>
+    <p><strong>Gap:</strong> <input type="range" id="gapSize" min="0" max="0.5" step="0.01" value="${gap}" /></p>
+    <p><strong>Bevel:</strong> <input type="range" id="bevelInput" min="0.0" max="0.4" step="0.05" value="${bevel}" /></p>
     <p><strong>Number per Axis:</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /></p>
     <p><button id="resetCube">Reset Cube</button></p>
     <hr>
@@ -252,6 +253,18 @@ document.body.appendChild(configPopover);
 // Toggle configuration popover on gear icon click
 gearIcon.addEventListener('click', () => {
     configPopover.style.display = (configPopover.style.display === 'none') ? 'block' : 'none';
+});
+
+document.getElementById('bevelInput').addEventListener('change', (event) => {
+    console.log(event.target.value);
+    bevel = parseFloat(event.target.value);
+    buildCube();
+});
+
+document.getElementById('gapSize').addEventListener('change', (event) => {
+    console.log(event.target.value);
+    gap = parseFloat(event.target.value);
+    buildCube();
 });
 
 document.getElementById('numPerAxisInput').addEventListener('change', (event) => {
