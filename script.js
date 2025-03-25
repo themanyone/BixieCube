@@ -119,6 +119,10 @@ camera.position.z = 2 + numPerAxis;
 let isRotating = false;
 const rotationQueue = [];
 
+// Global history and flag for undo moves
+let moveHistory = [];
+let isUndoing = false;
+
 // Global variable to hold the current layer mode (default = 1)
 let currentLayers = 1;
 
@@ -135,11 +139,9 @@ function rotateFace(face, angle, layersCount = 1) {
     const rotatingCubies = [];
     
     // Compute the boundary for selection based on the face.
-    // For instance, for the front face (highest z values):
     let boundary;
     switch (face) {
         case 'front':
-            // Cubies with z value greater than this boundary (near the front) are rotated.
             boundary = offset - ((layersCount - 1) * (cubieSize + gap));
             rubyCube.children.forEach(cubie => {
                 if (cubie.position.z > boundary - eps) {
@@ -189,8 +191,7 @@ function rotateFace(face, angle, layersCount = 1) {
             break;
     }
     
-    // Then proceed (as before) to reparent the selected cubies into a temporary group
-    // and animate their rotation.
+    // Reparent selected cubies into a temporary group for rotation.
     const tempGroup = new THREE.Group();
     scene.add(tempGroup);
     rotatingCubies.forEach(cubie => {
@@ -198,6 +199,7 @@ function rotateFace(face, angle, layersCount = 1) {
         tempGroup.add(cubie);
     });
     
+    // Determine the rotation axis
     let rotationAxis = new THREE.Vector3();
     if (face === 'front' || face === 'back') {
         rotationAxis.set(0, 0, 1);
@@ -207,7 +209,7 @@ function rotateFace(face, angle, layersCount = 1) {
         rotationAxis.set(0, 1, 0);
     }
     
-    // Set up the smooth rotation transition
+    // Smooth rotation transition setup
     const duration = 150; // milliseconds
     const startTime = performance.now();
     const initialQuat = tempGroup.quaternion.clone();
@@ -230,28 +232,50 @@ function rotateFace(face, angle, layersCount = 1) {
             });
             scene.remove(tempGroup);
             isRotating = false;
-            // Check if any rotations are queued. If yes, trigger the next one.
-            if(rotationQueue.length > 0) {
+            
+            // If this was a normal (non-undo) move, record it.
+            if (!isUndoing) {
+                moveHistory.push({ face, angle, layersCount });
+            }
+            
+            // Check for queued rotations.
+            if (rotationQueue.length > 0) {
                 const next = rotationQueue.shift();
                 rotateFace(next.face, next.angle, next.layersCount);
             }
-            // Reset currentLayers to 1 after rotation if desired.
+            // Optionally, reset the current layer mode.
             currentLayers = 1;
+            // If we were undoing, we're done undoing.
+            if (isUndoing) {
+                isUndoing = false;
+            }
         }
     }
     requestAnimationFrame(animateRotation);
 }
 
-// Listen for number keys (0-9) to set the layers mode.
+// Listen for keydown events.
 window.addEventListener('keydown', e => {
+    // If number keys 2-9 are pressed, set the layers mode.
     if (e.key >= '2' && e.key <= '9') {
-        // Convert the key to a number; ensure it is at least 1 and at most half of numPerAxis.
         const n = parseInt(e.key, 10);
         currentLayers = Math.max(1, Math.min(n, Math.floor(numPerAxis / 2)));
         console.log('Rotate layers mode set to:', currentLayers);
-        return; // Do not trigger face rotation on number key press.
+        return;
     }
     
+    // Hotkey for undo (last move)
+    if (e.key === 'z') {
+        if (moveHistory.length > 0) {
+            const lastMove = moveHistory.pop();
+            isUndoing = true;
+            // Perform the inverse rotation.
+            rotateFace(lastMove.face, -lastMove.angle, lastMove.layersCount);
+        }
+        return;
+    }
+    
+    // Process face rotation keys.
     let angle;
     switch (e.key) {
         case 'a': angle = Math.PI / 2; rotateFace('front', angle, currentLayers); break;
