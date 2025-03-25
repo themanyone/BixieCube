@@ -91,18 +91,21 @@ function rotateFace(face, angle, layersCount = 1) {
             rotatingCubies.forEach(cubie => {
                 tempGroup.remove(cubie);
                 cubie.applyMatrix4(tempGroup.matrixWorld);
+                // Recalculate grid indices based on the new position
+                const currentOffset = getOffset();
+                cubie.userData.i = Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
+                cubie.userData.j = Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                cubie.userData.k = Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
                 rubyCube.add(cubie);
             });
             scene.remove(tempGroup);
             isRotating = false;
             if (!isUndoing) {
                 moveHistory.push({ face, angle, layersCount });
-                // Check if the cube is solved (only for non-undo moves).
                 if (checkCubeSolved()) {
                     console.log("Cube solved!");
                 }
             }
-            // Process pending undo actions with priority over normal rotations.
             if (undoQueue.length > 0) {
                 const nextUndo = undoQueue.shift();
                 isUndoing = true;
@@ -113,7 +116,6 @@ function rotateFace(face, angle, layersCount = 1) {
             }
             currentLayers = 1;
             if (isUndoing) {
-                // reset flag if we just executed an undo
                 isUndoing = false;
             }
         }

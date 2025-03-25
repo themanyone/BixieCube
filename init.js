@@ -146,10 +146,25 @@ function buildCube() {
 
                 const cubie = new THREE.Mesh(geometry, materials);
                 cubie.position.set(x, y, z);
+                // Store the grid indices so we can update positions later
+                cubie.userData = { i, j, k };
                 rubyCube.add(cubie);
             }
         }
     }
+}
+
+// New function to update the cubies' positions based on the current gap
+function updateCubePositions(gap) {
+    const currentOffset = ((numPerAxis - 1) * (cubieSize + gap)) / 2;
+    rubyCube.children.forEach(cubie => {
+        const { i, j, k } = cubie.userData;
+        cubie.position.set(
+            i * (cubieSize + gap) - currentOffset,
+            j * (cubieSize + gap) - currentOffset,
+            k * (cubieSize + gap) - currentOffset
+        );
+    });
 }
 
 // Initial cube build
@@ -241,7 +256,7 @@ configPopover.style.zIndex = '1000';
 configPopover.innerHTML = `
     <h3>Configuration Options</h3>
     <p>Adjust settings as needed.</p>
-    <p><strong>Gap:</strong> <input type="range" id="gapSize" min="0" max="0.5" step="0.01" value="${gap}" /></p>
+    <p><strong>Gap:</strong> <input type="range" id="gapSize" min="0" max="1.0" step="0.01" value="${gap}" /></p>
     <p><strong>Bevel:</strong> <input type="range" id="bevelInput" min="0.0" max="0.4" step="0.05" value="${bevel}" /></p>
     <p><strong>Number per Axis:</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /></p>
     <p><button id="resetCube">Reset Cube</button></p>
@@ -255,16 +270,17 @@ gearIcon.addEventListener('click', () => {
     configPopover.style.display = (configPopover.style.display === 'none') ? 'block' : 'none';
 });
 
-document.getElementById('bevelInput').addEventListener('change', (event) => {
+document.getElementById('bevelInput').addEventListener('input', (event) => {
     console.log(event.target.value);
     bevel = parseFloat(event.target.value);
-    buildCube();
+    updateCubeBevel(bevel);
 });
 
-document.getElementById('gapSize').addEventListener('change', (event) => {
+document.getElementById('gapSize').addEventListener('input', (event) => {
     console.log(event.target.value);
     gap = parseFloat(event.target.value);
-    buildCube();
+    // Instead of rebuilding the cube, just reposition the cubies
+    updateCubePositions(gap);
 });
 
 document.getElementById('numPerAxisInput').addEventListener('change', (event) => {
