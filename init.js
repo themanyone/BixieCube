@@ -196,27 +196,14 @@ animate();
 // Create hamburger icon element
 const hamburger = document.createElement('div');
 hamburger.innerHTML = '&#9776;'; // Unicode hamburger icon
-hamburger.style.position = 'fixed';
-hamburger.style.top = '20px';
-hamburger.style.left = '20px';
-hamburger.style.fontSize = '30px';
-hamburger.style.cursor = 'pointer';
-hamburger.style.zIndex = '1000';
-hamburger.style.color = 'white';
+hamburger.classList.add('icon', 'hamburger-icon');
 document.body.appendChild(hamburger);
 
 // Create popover element
 const popover = document.createElement('div');
-popover.style.position = 'fixed';
+popover.classList.add('popover');
 popover.style.top = '60px';
 popover.style.left = '20px';
-popover.style.padding = '20px';
-popover.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Transparent background
-popover.style.borderRadius = '8px';
-popover.style.color = 'white';
-popover.style.fontSize = '14px';
-popover.style.display = 'none';
-popover.style.zIndex = '1000';
 popover.innerHTML = `
     <h3>Keyboard Help</h3>
     <p>Right-click: Move camera</p>
@@ -244,27 +231,14 @@ hamburger.addEventListener('click', () => {
 // Create gear icon element for configuration
 const gearIcon = document.createElement('div');
 gearIcon.innerHTML = '&#9881;'; // Unicode gear icon ⚙
-gearIcon.style.position = 'fixed';
-gearIcon.style.top = '20px';
-gearIcon.style.right = '20px';
-gearIcon.style.fontSize = '30px';
-gearIcon.style.cursor = 'pointer';
-gearIcon.style.zIndex = '1000';
-gearIcon.style.color = 'white';
+gearIcon.classList.add('icon', 'gear-icon');
 document.body.appendChild(gearIcon);
 
 // Create configuration popover element
 const configPopover = document.createElement('div');
-configPopover.style.position = 'fixed';
+configPopover.classList.add('popover');
 configPopover.style.top = '60px';
 configPopover.style.right = '20px';
-configPopover.style.padding = '20px';
-configPopover.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Transparent background
-configPopover.style.borderRadius = '8px';
-configPopover.style.color = 'white';
-configPopover.style.fontSize = '14px';
-configPopover.style.display = 'none';
-configPopover.style.zIndex = '1000';
 configPopover.innerHTML = `
     <h3>Configuration Options</h3>
     <p>Adjust settings as needed.</p>

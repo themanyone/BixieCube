@@ -164,7 +164,7 @@ function checkCubeSolved() {
         }
     });
     const solved = Object.values(faceColors).every(set => set.size === 1);
-    // Check if all faces have only one unique color.
+    // solved if all faces have only one unique color.
     return solved;
 }
 
