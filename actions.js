@@ -4,6 +4,7 @@ import { scene, camera, rubyCube, cubieSize, gap, numPerAxis, offset } from './i
 // Global flags, history, and queues for rotations.
 let isRotating = false;
 const rotationQueue = [];
+const undoQueue = [];  // <-- new undo queue
 let moveHistory = [];
 let isUndoing = false;
 let currentLayers = 1;
@@ -97,12 +98,18 @@ function rotateFace(face, angle, layersCount = 1) {
             if (!isUndoing) {
                 moveHistory.push({ face, angle, layersCount });
             }
-            if (rotationQueue.length > 0) {
+            // Process pending undo actions with priority over normal rotations.
+            if (undoQueue.length > 0) {
+                const nextUndo = undoQueue.shift();
+                isUndoing = true;
+                rotateFace(nextUndo.face, nextUndo.angle, nextUndo.layersCount);
+            } else if (rotationQueue.length > 0) {
                 const next = rotationQueue.shift();
                 rotateFace(next.face, next.angle, next.layersCount);
             }
             currentLayers = 1;
             if (isUndoing) {
+                // reset flag if we just executed an undo
                 isUndoing = false;
             }
         }
@@ -123,8 +130,14 @@ window.addEventListener('keydown', e => {
     if (e.key === 'z') {
         if (moveHistory.length > 0) {
             const lastMove = moveHistory.pop();
-            isUndoing = true;
-            rotateFace(lastMove.face, -lastMove.angle, lastMove.layersCount);
+            const undoMove = { face: lastMove.face, angle: -lastMove.angle, layersCount: lastMove.layersCount };
+            // If rotation is underway or queued then push it to the undo queue.
+            if (isRotating || rotationQueue.length > 0 || undoQueue.length > 0) {
+                undoQueue.push(undoMove);
+            } else {
+                isUndoing = true;
+                rotateFace(undoMove.face, undoMove.angle, undoMove.layersCount);
+            }
         }
         return;
     }
