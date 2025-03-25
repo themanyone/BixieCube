@@ -40,7 +40,7 @@ export const faceDefinitions = [
 ];
 
 // Default material for unlabelled (inner) faces
-export const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0x111111 });
+//export const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0x111111 });
 
 // Initialize scene, camera, and renderer
 export const scene = new THREE.Scene();
@@ -59,6 +59,17 @@ export const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.2;  // increased damping for tighter rotation
 controls.rotateSpeed = 0.7;    // reduced rotation speed for a more controlled feel
+
+// Add ambient light to properly light transparent materials
+const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Soft white light
+scene.add(ambientLight);
+
+// Add an emissive material to make the cube glow from within
+const defaultMaterial = new THREE.MeshStandardMaterial({
+    emissive: 0xffffff, // White glow
+    emissiveIntensity: 0.1, // Adjust intensity as needed
+    color: 0x000000 // Base color
+});
 
 // Create group for cube pieces (cubies)
 export const rubyCube = new THREE.Group();
@@ -179,6 +190,25 @@ function updateCubePositions(gap) {
     });
 }
 
+// New function to update the cubies' alpha based on the current value
+function updateCubeAlpha(newAlpha) {
+    rubyCube.children.forEach(cubie => {
+        if (cubie.material) {
+            const materials = Array.isArray(cubie.material)
+                ? cubie.material
+                : [cubie.material];
+            materials.forEach(mat => {
+                mat.opacity = newAlpha;
+                mat.transparent = newAlpha < 1;
+                mat.depthWrite = newAlpha === 1;
+                // Render both sides to fix back-face culling issues
+                mat.side = newAlpha < 1 ? THREE.DoubleSide : THREE.FrontSide;
+                mat.needsUpdate = true;
+            });
+        }
+    });
+}
+
 // Initial cube build
 buildCube();
 
@@ -244,6 +274,7 @@ configPopover.innerHTML = `
     <p>Adjust settings as needed.</p>
     <p><strong>Gap:</strong> <input type="range" id="gapSize" min="0" max="1.0" step="0.01" value="${gap}" /></p>
     <p><strong>Bevel:</strong> <input type="range" id="bevelInput" min="0.0" max="0.5" step="0.05" value="${bevel}" /></p>
+    <p><strong>Alpha:</strong> <input type="range" id="alphaInput" min="0" max="1" step="0.01" value="1" /></p>
     <p><strong>Number per Axis:</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /></p>
     <p><button id="resetCube">Reset Cube</button></p>
     <hr>
@@ -257,16 +288,19 @@ gearIcon.addEventListener('click', () => {
 });
 
 document.getElementById('bevelInput').addEventListener('input', (event) => {
-    console.log(event.target.value);
     bevel = parseFloat(event.target.value);
     updateCubeBevel(bevel);
 });
 
 document.getElementById('gapSize').addEventListener('input', (event) => {
-    console.log(event.target.value);
     gap = parseFloat(event.target.value);
     // Instead of rebuilding the cube, just reposition the cubies
     updateCubePositions(gap);
+});
+
+document.getElementById('alphaInput').addEventListener('input', (event) => {
+    const alpha = parseFloat(event.target.value);
+    updateCubeAlpha(alpha);
 });
 
 document.getElementById('numPerAxisInput').addEventListener('change', (event) => {
