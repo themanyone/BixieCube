@@ -1,5 +1,5 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-import { scene, camera, rubyCube, cubieSize, gap, numPerAxis, offset } from './init.js';
+import { scene, camera, rubyCube, cubieSize, gap, numPerAxis, getOffset } from './init.js';
 
 // Global flags, history, and queues for rotations.
 let isRotating = false;
@@ -20,37 +20,37 @@ function rotateFace(face, angle, layersCount = 1) {
     let boundary;
     switch (face) {
         case 'front':
-            boundary = offset - ((layersCount - 1) * (cubieSize + gap));
+            boundary = getOffset() - ((layersCount - 1) * (cubieSize + gap));
             rubyCube.children.forEach(cubie => { 
                 if (cubie.position.z > boundary - eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'back':
-            boundary = -offset + ((layersCount - 1) * (cubieSize + gap));
+            boundary = -getOffset() + ((layersCount - 1) * (cubieSize + gap));
             rubyCube.children.forEach(cubie => { 
                 if (cubie.position.z < boundary + eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'right':
-            boundary = offset - ((layersCount - 1) * (cubieSize + gap));
+            boundary = getOffset() - ((layersCount - 1) * (cubieSize + gap));
             rubyCube.children.forEach(cubie => {
                 if (cubie.position.x > boundary - eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'left':
-            boundary = -offset + ((layersCount - 1) * (cubieSize + gap));
+            boundary = -getOffset() + ((layersCount - 1) * (cubieSize + gap));
             rubyCube.children.forEach(cubie => {
                 if (cubie.position.x < boundary + eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'top':
-            boundary = offset - ((layersCount - 1) * (cubieSize + gap));
+            boundary = getOffset() - ((layersCount - 1) * (cubieSize + gap));
             rubyCube.children.forEach(cubie => {
                 if (cubie.position.y > boundary - eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'bottom':
-            boundary = -offset + ((layersCount - 1) * (cubieSize + gap));
+            boundary = -getOffset() + ((layersCount - 1) * (cubieSize + gap));
             rubyCube.children.forEach(cubie => {
                 if (cubie.position.y < boundary + eps) { rotatingCubies.push(cubie); }
             });
@@ -137,27 +137,27 @@ function checkCubeSolved() {
     rubyCube.children.forEach(cubie => {
         const { x, y, z } = cubie.position;  
         // Front face
-        if (Math.abs(z - offset) < eps) {
+        if (Math.abs(z - getOffset()) < eps) {
             faceColors.front.add(cubie.material[4].color.getHex());
         }
         // Back face
-        if (Math.abs(z + offset) < eps) {
+        if (Math.abs(z + getOffset()) < eps) {
             faceColors.back.add(cubie.material[5].color.getHex());
         }
         // Left face
-        if (Math.abs(x + offset) < eps) {
+        if (Math.abs(x + getOffset()) < eps) {
             faceColors.left.add(cubie.material[1].color.getHex());
         }
         // Right face
-        if (Math.abs(x - offset) < eps) {
+        if (Math.abs(x - getOffset()) < eps) {
             faceColors.right.add(cubie.material[0].color.getHex());
         }
         // Top face
-        if (Math.abs(y - offset) < eps) {
+        if (Math.abs(y - getOffset()) < eps) {
             faceColors.top.add(cubie.material[2].color.getHex());
         }
         // Bottom face
-        if (Math.abs(y + offset) < eps) {
+        if (Math.abs(y + getOffset()) < eps) {
             faceColors.bottom.add(cubie.material[3].color.getHex());
         }
     });

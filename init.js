@@ -64,11 +64,11 @@ export const rubyCube = new THREE.Group();
 scene.add(rubyCube);
 
 // Parameters for a Rubik's cube
-export const cubieSize = 1;
-export const gap = 0.05;
+export let cubieSize = 1;
+export let gap = 0.05;
 // Change this value between 3 and 9 as desired.
-export const numPerAxis = 5;
-export const offset = ((numPerAxis - 1) * (cubieSize + gap)) / 2;
+export let numPerAxis = 5;
+export const getOffset = () => ((numPerAxis - 1) * (cubieSize + gap)) / 2;
 
 // Helper function to check if an index is in the center region 
 function isCenter(index) {
@@ -79,60 +79,80 @@ function isCenter(index) {
     }
 }
 
-// Create cubies with per-face materials
-for (let i = 0; i < numPerAxis; i++) {
-    for (let j = 0; j < numPerAxis; j++) {
-        for (let k = 0; k < numPerAxis; k++) {
-            const geometry = new RoundedBoxGeometry(cubieSize, cubieSize, cubieSize, 2, cubieSize * 0.1);
-            const materials = geometry.groups.map(() => defaultMaterial);
-            const x = i * (cubieSize + gap) - offset;
-            const y = j * (cubieSize + gap) - offset;
-            const z = k * (cubieSize + gap) - offset;
-            const eps = 0.001;
-            // Label the center cubie(s) for each face
-            if (i === numPerAxis - 1 && isCenter(j) && isCenter(k)) { // right face
-                materials[0] = createFaceMaterial(faceDefinitions[0].color, faceDefinitions[0].letter);
+function buildCube() {
+    // Clear previous cubies from rubyCube group
+    while (rubyCube.children.length > 0) {
+        const child = rubyCube.children[0];
+        rubyCube.remove(child);
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+            if (Array.isArray(child.material)) {
+                child.material.forEach(mat => mat.dispose());
+            } else {
+                child.material.dispose();
             }
-            else if (Math.abs(x - offset) < eps) { // right faceOh. 
-                materials[0] = createFaceMaterial(faceDefinitions[0].color, "");
+        }
+    }
+    
+    // Recalculate offset based on updated numPerAxis
+    const currentOffset = getOffset();
+    
+    for (let i = 0; i < numPerAxis; i++) {
+        for (let j = 0; j < numPerAxis; j++) {
+            for (let k = 0; k < numPerAxis; k++) {
+                const geometry = new RoundedBoxGeometry(cubieSize, cubieSize, cubieSize, 2, cubieSize * 0.1);
+                const materials = geometry.groups.map(() => defaultMaterial);
+                const x = i * (cubieSize + gap) - currentOffset;
+                const y = j * (cubieSize + gap) - currentOffset;
+                const z = k * (cubieSize + gap) - currentOffset;
+                const eps = 0.001;
+                // Right face
+                if (i === numPerAxis - 1 && isCenter(j) && isCenter(k)) {
+                    materials[0] = createFaceMaterial(faceDefinitions[0].color, faceDefinitions[0].letter);
+                } else if (Math.abs(x - currentOffset) < eps) {
+                    materials[0] = createFaceMaterial(faceDefinitions[0].color, "");
+                }
+                // Left face
+                if (i === 0 && isCenter(j) && isCenter(k)) {
+                    materials[1] = createFaceMaterial(faceDefinitions[1].color, faceDefinitions[1].letter);
+                } else if (Math.abs(x + currentOffset) < eps) {
+                    materials[1] = createFaceMaterial(faceDefinitions[1].color, "");
+                }
+                // Top face
+                if (j === numPerAxis - 1 && isCenter(i) && isCenter(k)) {
+                    materials[2] = createFaceMaterial(faceDefinitions[2].color, faceDefinitions[2].letter);
+                } else if (Math.abs(y - currentOffset) < eps) {
+                    materials[2] = createFaceMaterial(faceDefinitions[2].color, "");
+                }
+                // Bottom face
+                if (j === 0 && isCenter(i) && isCenter(k)) {
+                    materials[3] = createFaceMaterial(faceDefinitions[3].color, faceDefinitions[3].letter);
+                } else if (Math.abs(y + currentOffset) < eps) {
+                    materials[3] = createFaceMaterial(faceDefinitions[3].color, "");
+                }
+                // Front face
+                if (k === numPerAxis - 1 && isCenter(i) && isCenter(j)) {
+                    materials[4] = createFaceMaterial(faceDefinitions[4].color, faceDefinitions[4].letter);
+                } else if (Math.abs(z - currentOffset) < eps) {
+                    materials[4] = createFaceMaterial(faceDefinitions[4].color, "");
+                }
+                // Back face
+                if (k === 0 && isCenter(i) && isCenter(j)) {
+                    materials[5] = createFaceMaterial(faceDefinitions[5].color, faceDefinitions[5].letter);
+                } else if (Math.abs(z + currentOffset) < eps) {
+                    materials[5] = createFaceMaterial(faceDefinitions[5].color, "");
+                }
+
+                const cubie = new THREE.Mesh(geometry, materials);
+                cubie.position.set(x, y, z);
+                rubyCube.add(cubie);
             }
-            if (i === 0 && isCenter(j) && isCenter(k)) { // left face
-                materials[1] = createFaceMaterial(faceDefinitions[1].color, faceDefinitions[1].letter);
-            }
-            else if (Math.abs(x + offset) < eps) { // left face
-                materials[1] = createFaceMaterial(faceDefinitions[1].color, "");
-            }
-            if (j === numPerAxis - 1 && isCenter(i) && isCenter(k)) { // top face
-                materials[2] = createFaceMaterial(faceDefinitions[2].color, faceDefinitions[2].letter);
-            }
-            else if (Math.abs(y - offset) < eps) { // top face
-                materials[2] = createFaceMaterial(faceDefinitions[2].color, "");
-            }
-            if (j === 0 && isCenter(i) && isCenter(k)) { // bottom face
-                materials[3] = createFaceMaterial(faceDefinitions[3].color, faceDefinitions[3].letter);
-            }
-            else if (Math.abs(y + offset) < eps) { // bottom face
-                materials[3] = createFaceMaterial(faceDefinitions[3].color, "");
-            }
-            if (k === numPerAxis - 1 && isCenter(i) && isCenter(j)) { // front face
-                materials[4] = createFaceMaterial(faceDefinitions[4].color, faceDefinitions[4].letter);
-            }
-            else if (Math.abs(z - offset) < eps) { // front face
-                materials[4] = createFaceMaterial(faceDefinitions[4].color, "");
-            }
-            if (k === 0 && isCenter(i) && isCenter(j)) { // back face
-                materials[5] = createFaceMaterial(faceDefinitions[5].color, faceDefinitions[5].letter);
-            }
-            else if (Math.abs(z + offset) < eps) { // back face
-                materials[5] = createFaceMaterial(faceDefinitions[5].color, "");
-            }
-            
-            const cubie = new THREE.Mesh(geometry, materials);
-            cubie.position.set(x, y, z);
-            rubyCube.add(cubie);
         }
     }
 }
+
+// Initial cube build
+buildCube();
 
 // Position camera so the whole cube is visible.
 camera.position.z = 2 + numPerAxis;
@@ -222,7 +242,7 @@ configPopover.innerHTML = `
     <p>Adjust settings as needed.</p>
     <p><strong>Gap:</strong> <input type="range" min="0" max="0.2" step="0.01" value="${gap}" /></p>
     <p><strong>Cubie Size:</strong> <input type="range" min="0.9" max="1.1" step="0.1" value="${cubieSize}" /></p>
-    <p><strong>Number per Axis:</strong> <input type="range" min="3" max="9" step="1" value="${numPerAxis}" /></p>
+    <p><strong>Number per Axis:</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /></p>
     <p><button id="resetCube">Reset Cube</button></p>
     <hr>
     <p>Add more options here.</p>
@@ -232,4 +252,15 @@ document.body.appendChild(configPopover);
 // Toggle configuration popover on gear icon click
 gearIcon.addEventListener('click', () => {
     configPopover.style.display = (configPopover.style.display === 'none') ? 'block' : 'none';
+});
+
+document.getElementById('numPerAxisInput').addEventListener('change', (event) => {
+    numPerAxis = parseInt(event.target.value, 10);
+    camera.position.z = 2 + numPerAxis;
+    buildCube();
+});
+
+document.getElementById('resetCube').addEventListener('click', () => {
+    camera.position.z = 2 + numPerAxis;
+    buildCube();
 });
