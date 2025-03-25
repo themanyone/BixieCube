@@ -10,11 +10,27 @@ body {
     background-color: #000000;
 }
 #game-container {
-    width: 100%;
+    width: 100vw;
     height: 100%;
     background-color: #000000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
+}
+#overlay {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1;
+}
+#overlay h1 {
+    color: #ce496b;
+    font-size: 2rem;
+    margin-bottom: 1rem;
 }

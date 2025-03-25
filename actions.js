@@ -8,6 +8,7 @@ const undoQueue = [];  // <-- new undo queue
 let moveHistory = [];
 let isUndoing = false;
 let currentLayers = 1;
+const eps = 0.001;
 
 function rotateFace(face, angle, layersCount = 1) {
     if (isRotating) {
@@ -15,7 +16,6 @@ function rotateFace(face, angle, layersCount = 1) {
         return;
     }
     isRotating = true;
-    const eps = 0.001;
     const rotatingCubies = [];
     let boundary;
     switch (face) {
@@ -124,10 +124,46 @@ function rotateFace(face, angle, layersCount = 1) {
 // New helper to check if the cube is solved.
 // You can replace the content of this function with your own solved-state logic.
 function checkCubeSolved() {
-    // Implement your solved check logic here.
-    console.log('Checking if cube is solved...');
-    // For demonstration, this stub always returns false.
-    return false;
+    // Check if faces on each side are the same color.
+    const faceColors = {
+        front: new Set(),
+        back: new Set(),
+        left: new Set(),
+        right: new Set(),
+        top: new Set(),
+        bottom: new Set(),
+    };
+    window.rc = rubyCube.children;
+    rubyCube.children.forEach(cubie => {
+        const { x, y, z } = cubie.position;  
+        // Front face
+        if (Math.abs(z - offset) < eps) {
+            faceColors.front.add(cubie.material[4].color.getHex());
+        }
+        // Back face
+        if (Math.abs(z + offset) < eps) {
+            faceColors.back.add(cubie.material[5].color.getHex());
+        }
+        // Left face
+        if (Math.abs(x + offset) < eps) {
+            faceColors.left.add(cubie.material[1].color.getHex());
+        }
+        // Right face
+        if (Math.abs(x - offset) < eps) {
+            faceColors.right.add(cubie.material[0].color.getHex());
+        }
+        // Top face
+        if (Math.abs(y - offset) < eps) {
+            faceColors.top.add(cubie.material[2].color.getHex());
+        }
+        // Bottom face
+        if (Math.abs(y + offset) < eps) {
+            faceColors.bottom.add(cubie.material[3].color.getHex());
+        }
+    });
+    const solved = Object.values(faceColors).every(set => set.size === 1);
+    // Check if all faces have only one unique color.
+    return solved;
 }
 
 // Key event handler for hotkeys

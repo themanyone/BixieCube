@@ -2,6 +2,10 @@ import * as THREE from 'https://unpkg.com/three/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 import { RoundedBoxGeometry } from 'https://unpkg.com/three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
+// Get rid of the loading screen
+const fc = document.querySelector("#game-container");
+fc.parentElement.removeChild(fc);
+
 // Create a canvas texture for a colored face with a letter label
 function createFaceTexture(color, letter) {
     const size = 256;
@@ -89,7 +93,7 @@ for (let i = 0; i < numPerAxis; i++) {
             if (i === numPerAxis - 1 && isCenter(j) && isCenter(k)) { // right face
                 materials[0] = createFaceMaterial(faceDefinitions[0].color, faceDefinitions[0].letter);
             }
-            else if (Math.abs(x - offset) < eps) { // right face
+            else if (Math.abs(x - offset) < eps) { // right faceOh. 
                 materials[0] = createFaceMaterial(faceDefinitions[0].color, "");
             }
             if (i === 0 && isCenter(j) && isCenter(k)) { // left face
