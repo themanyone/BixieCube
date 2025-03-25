@@ -192,3 +192,44 @@ document.body.appendChild(popover);
 hamburger.addEventListener('click', () => {
     popover.style.display = (popover.style.display === 'none') ? 'block' : 'none';
 });
+
+// Create gear icon element for configuration
+const gearIcon = document.createElement('div');
+gearIcon.innerHTML = '&#9881;'; // Unicode gear icon ⚙
+gearIcon.style.position = 'fixed';
+gearIcon.style.top = '20px';
+gearIcon.style.right = '20px';
+gearIcon.style.fontSize = '30px';
+gearIcon.style.cursor = 'pointer';
+gearIcon.style.zIndex = '1000';
+gearIcon.style.color = 'white';
+document.body.appendChild(gearIcon);
+
+// Create configuration popover element
+const configPopover = document.createElement('div');
+configPopover.style.position = 'fixed';
+configPopover.style.top = '60px';
+configPopover.style.right = '20px';
+configPopover.style.padding = '20px';
+configPopover.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'; // Transparent background
+configPopover.style.borderRadius = '8px';
+configPopover.style.color = 'white';
+configPopover.style.fontSize = '14px';
+configPopover.style.display = 'none';
+configPopover.style.zIndex = '1000';
+configPopover.innerHTML = `
+    <h3>Configuration Options</h3>
+    <p>Adjust settings as needed.</p>
+    <p><strong>Gap:</strong> <input type="range" min="0" max="0.2" step="0.01" value="${gap}" /></p>
+    <p><strong>Cubie Size:</strong> <input type="range" min="0.9" max="1.1" step="0.1" value="${cubieSize}" /></p>
+    <p><strong>Number per Axis:</strong> <input type="range" min="3" max="9" step="1" value="${numPerAxis}" /></p>
+    <p><button id="resetCube">Reset Cube</button></p>
+    <hr>
+    <p>Add more options here.</p>
+`;
+document.body.appendChild(configPopover);
+
+// Toggle configuration popover on gear icon click
+gearIcon.addEventListener('click', () => {
+    configPopover.style.display = (configPopover.style.display === 'none') ? 'block' : 'none';
+});
