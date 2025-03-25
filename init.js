@@ -57,7 +57,8 @@ document.body.appendChild(renderer.domElement);
 // Add OrbitControls for interaction
 export const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.05;
+controls.dampingFactor = 0.2;  // increased damping for tighter rotation
+controls.rotateSpeed = 0.7;    // reduced rotation speed for a more controlled feel
 
 // Create group for cube pieces (cubies)
 export const rubyCube = new THREE.Group();

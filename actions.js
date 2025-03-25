@@ -73,7 +73,7 @@ function rotateFace(face, angle, layersCount = 1) {
         rotationAxis.set(0, 1, 0);
     }
     
-    const duration = 150; // duration in milliseconds
+    const duration = 200; // duration in milliseconds
     const startTime = performance.now();
     const initialQuat = tempGroup.quaternion.clone();
     const deltaQuat = new THREE.Quaternion().setFromAxisAngle(rotationAxis, angle);
