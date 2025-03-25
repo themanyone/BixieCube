@@ -66,6 +66,15 @@ export const gap = 0.05;
 export const numPerAxis = 5;
 export const offset = ((numPerAxis - 1) * (cubieSize + gap)) / 2;
 
+// Helper function to check if an index is in the center region 
+function isCenter(index) {
+    if (numPerAxis % 2 === 1) {
+        return index === Math.floor(numPerAxis / 2);
+    } else {
+        return index === numPerAxis / 2 - 1 || index === numPerAxis / 2;
+    }
+}
+
 // Create cubies with per-face materials
 for (let i = 0; i < numPerAxis; i++) {
     for (let j = 0; j < numPerAxis; j++) {
@@ -76,24 +85,44 @@ for (let i = 0; i < numPerAxis; i++) {
             const y = j * (cubieSize + gap) - offset;
             const z = k * (cubieSize + gap) - offset;
             const eps = 0.001;
-            if (Math.abs(x - offset) < eps) { // right face
+            // Label the center cubie(s) for each face
+            if (i === numPerAxis - 1 && isCenter(j) && isCenter(k)) { // right face
                 materials[0] = createFaceMaterial(faceDefinitions[0].color, faceDefinitions[0].letter);
             }
-            if (Math.abs(x + offset) < eps) { // left face
+            else if (Math.abs(x - offset) < eps) { // right face
+                materials[0] = createFaceMaterial(faceDefinitions[0].color, "");
+            }
+            if (i === 0 && isCenter(j) && isCenter(k)) { // left face
                 materials[1] = createFaceMaterial(faceDefinitions[1].color, faceDefinitions[1].letter);
             }
-            if (Math.abs(y - offset) < eps) { // top face
+            else if (Math.abs(x + offset) < eps) { // left face
+                materials[1] = createFaceMaterial(faceDefinitions[1].color, "");
+            }
+            if (j === numPerAxis - 1 && isCenter(i) && isCenter(k)) { // top face
                 materials[2] = createFaceMaterial(faceDefinitions[2].color, faceDefinitions[2].letter);
             }
-            if (Math.abs(y + offset) < eps) { // bottom face
+            else if (Math.abs(y - offset) < eps) { // top face
+                materials[2] = createFaceMaterial(faceDefinitions[2].color, "");
+            }
+            if (j === 0 && isCenter(i) && isCenter(k)) { // bottom face
                 materials[3] = createFaceMaterial(faceDefinitions[3].color, faceDefinitions[3].letter);
             }
-            if (Math.abs(z - offset) < eps) { // front face
+            else if (Math.abs(y + offset) < eps) { // bottom face
+                materials[3] = createFaceMaterial(faceDefinitions[3].color, "");
+            }
+            if (k === numPerAxis - 1 && isCenter(i) && isCenter(j)) { // front face
                 materials[4] = createFaceMaterial(faceDefinitions[4].color, faceDefinitions[4].letter);
             }
-            if (Math.abs(z + offset) < eps) { // back face
+            else if (Math.abs(z - offset) < eps) { // front face
+                materials[4] = createFaceMaterial(faceDefinitions[4].color, "");
+            }
+            if (k === 0 && isCenter(i) && isCenter(j)) { // back face
                 materials[5] = createFaceMaterial(faceDefinitions[5].color, faceDefinitions[5].letter);
             }
+            else if (Math.abs(z + offset) < eps) { // back face
+                materials[5] = createFaceMaterial(faceDefinitions[5].color, "");
+            }
+            
             const cubie = new THREE.Mesh(geometry, materials);
             cubie.position.set(x, y, z);
             rubyCube.add(cubie);
