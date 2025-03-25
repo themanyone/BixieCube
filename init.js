@@ -33,7 +33,7 @@ export function createFaceMaterial(color, letter) {
 export const faceDefinitions = [
     { color: '#00ff00', letter: 'D' },
     { color: '#0000ff', letter: 'C' },
-    { color: '#ffffff', letter: 'E' },
+    { color: '#f8f8f8', letter: 'E' },
     { color: '#ffff00', letter: 'F' },
     { color: '#ff00a5', letter: 'A' },
     { color: '#a50000', letter: 'B' }
