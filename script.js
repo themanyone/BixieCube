@@ -119,32 +119,78 @@ camera.position.z = 2 + numPerAxis;
 let isRotating = false;
 const rotationQueue = [];
 
-function rotateFace(face, angle) {
+// Global variable to hold the current layer mode (default = 1)
+let currentLayers = 1;
+
+// Updated rotateFace now takes an extra parameter: layersCount
+function rotateFace(face, angle, layersCount = 1) {
     // If a rotation is already in progress, queue the new request and exit.
     if (isRotating) {
-        rotationQueue.push({ face, angle });
+        rotationQueue.push({ face, angle, layersCount });
         return;
     }
     isRotating = true;
 
-    const threshold = (cubieSize + gap) / 2;
+    const eps = 0.001;
     const rotatingCubies = [];
-    console.log(`Rotating face ${face} by ${angle} radians`);
-    // Select cubies on the target face
-    rubyCube.children.forEach(cubie => {
-        if (
-            (face === 'front'  && cubie.position.z > offset - threshold) ||
-            (face === 'back'   && cubie.position.z < -offset + threshold) ||
-            (face === 'left'   && cubie.position.x < -offset + threshold) ||
-            (face === 'right'  && cubie.position.x > offset - threshold) ||
-            (face === 'top'    && cubie.position.y > offset - threshold) ||
-            (face === 'bottom' && cubie.position.y < -offset + threshold)
-        ) {
-            rotatingCubies.push(cubie);
-        }
-    });
     
-    // Create a temporary group and reparent the selected cubies
+    // Compute the boundary for selection based on the face.
+    // For instance, for the front face (highest z values):
+    let boundary;
+    switch (face) {
+        case 'front':
+            // Cubies with z value greater than this boundary (near the front) are rotated.
+            boundary = offset - ((layersCount - 1) * (cubieSize + gap));
+            rubyCube.children.forEach(cubie => {
+                if (cubie.position.z > boundary - eps) {
+                    rotatingCubies.push(cubie);
+                }
+            });
+            break;
+        case 'back':
+            boundary = -offset + ((layersCount - 1) * (cubieSize + gap));
+            rubyCube.children.forEach(cubie => {
+                if (cubie.position.z < boundary + eps) {
+                    rotatingCubies.push(cubie);
+                }
+            });
+            break;
+        case 'right':
+            boundary = offset - ((layersCount - 1) * (cubieSize + gap));
+            rubyCube.children.forEach(cubie => {
+                if (cubie.position.x > boundary - eps) {
+                    rotatingCubies.push(cubie);
+                }
+            });
+            break;
+        case 'left':
+            boundary = -offset + ((layersCount - 1) * (cubieSize + gap));
+            rubyCube.children.forEach(cubie => {
+                if (cubie.position.x < boundary + eps) {
+                    rotatingCubies.push(cubie);
+                }
+            });
+            break;
+        case 'top':
+            boundary = offset - ((layersCount - 1) * (cubieSize + gap));
+            rubyCube.children.forEach(cubie => {
+                if (cubie.position.y > boundary - eps) {
+                    rotatingCubies.push(cubie);
+                }
+            });
+            break;
+        case 'bottom':
+            boundary = -offset + ((layersCount - 1) * (cubieSize + gap));
+            rubyCube.children.forEach(cubie => {
+                if (cubie.position.y < boundary + eps) {
+                    rotatingCubies.push(cubie);
+                }
+            });
+            break;
+    }
+    
+    // Then proceed (as before) to reparent the selected cubies into a temporary group
+    // and animate their rotation.
     const tempGroup = new THREE.Group();
     scene.add(tempGroup);
     rotatingCubies.forEach(cubie => {
@@ -152,7 +198,6 @@ function rotateFace(face, angle) {
         tempGroup.add(cubie);
     });
     
-    // Determine the rotation axis based on face
     let rotationAxis = new THREE.Vector3();
     if (face === 'front' || face === 'back') {
         rotationAxis.set(0, 0, 1);
@@ -162,15 +207,13 @@ function rotateFace(face, angle) {
         rotationAxis.set(0, 1, 0);
     }
     
-    // Set up for smooth rotation using quaternion interpolation (slerp)
-    const duration = 150; // duration in milliseconds
+    // Set up the smooth rotation transition
+    const duration = 150; // milliseconds
     const startTime = performance.now();
-    const initialQuat = tempGroup.quaternion.clone();    
-    // Compute target quaternion (rotation about axis by given angle)
+    const initialQuat = tempGroup.quaternion.clone();
     const deltaQuat = new THREE.Quaternion().setFromAxisAngle(rotationAxis, angle);
     const targetQuat = deltaQuat.multiply(initialQuat);
     
-    // Animation function for smooth rotation transition
     function animateRotation(now) {
         const elapsed = now - startTime;
         const t = Math.min(elapsed / duration, 1);
@@ -190,30 +233,39 @@ function rotateFace(face, angle) {
             // Check if any rotations are queued. If yes, trigger the next one.
             if(rotationQueue.length > 0) {
                 const next = rotationQueue.shift();
-                rotateFace(next.face, next.angle);
+                rotateFace(next.face, next.angle, next.layersCount);
             }
+            // Reset currentLayers to 1 after rotation if desired.
+            currentLayers = 1;
         }
     }
-    
     requestAnimationFrame(animateRotation);
 }
 
-// Key mapping: lowercase = +90°, uppercase = -90°
+// Listen for number keys (0-9) to set the layers mode.
 window.addEventListener('keydown', e => {
+    if (e.key >= '2' && e.key <= '9') {
+        // Convert the key to a number; ensure it is at least 1 and at most half of numPerAxis.
+        const n = parseInt(e.key, 10);
+        currentLayers = Math.max(1, Math.min(n, Math.floor(numPerAxis / 2)));
+        console.log('Rotate layers mode set to:', currentLayers);
+        return; // Do not trigger face rotation on number key press.
+    }
+    
     let angle;
     switch (e.key) {
-        case 'a': angle = Math.PI / 2; rotateFace('front', angle); break;
-        case 'A': angle = -Math.PI / 2; rotateFace('front', angle); break;
-        case 'b': angle = Math.PI / 2; rotateFace('back', angle); break;
-        case 'B': angle = -Math.PI / 2; rotateFace('back', angle); break;
-        case 'c': angle = Math.PI / 2; rotateFace('left', angle); break;
-        case 'C': angle = -Math.PI / 2; rotateFace('left', angle); break;
-        case 'd': angle = Math.PI / 2; rotateFace('right', angle); break;
-        case 'D': angle = -Math.PI / 2; rotateFace('right', angle); break;
-        case 'e': angle = Math.PI / 2; rotateFace('top', angle); break;
-        case 'E': angle = -Math.PI / 2; rotateFace('top', angle); break;
-        case 'f': angle = Math.PI / 2; rotateFace('bottom', angle); break;
-        case 'F': angle = -Math.PI / 2; rotateFace('bottom', angle); break;
+        case 'a': angle = Math.PI / 2; rotateFace('front', angle, currentLayers); break;
+        case 'A': angle = -Math.PI / 2; rotateFace('front', angle, currentLayers); break;
+        case 'b': angle = Math.PI / 2; rotateFace('back', angle, currentLayers); break;
+        case 'B': angle = -Math.PI / 2; rotateFace('back', angle, currentLayers); break;
+        case 'c': angle = Math.PI / 2; rotateFace('left', angle, currentLayers); break;
+        case 'C': angle = -Math.PI / 2; rotateFace('left', angle, currentLayers); break;
+        case 'd': angle = Math.PI / 2; rotateFace('right', angle, currentLayers); break;
+        case 'D': angle = -Math.PI / 2; rotateFace('right', angle, currentLayers); break;
+        case 'e': angle = Math.PI / 2; rotateFace('top', angle, currentLayers); break;
+        case 'E': angle = -Math.PI / 2; rotateFace('top', angle, currentLayers); break;
+        case 'f': angle = Math.PI / 2; rotateFace('bottom', angle, currentLayers); break;
+        case 'F': angle = -Math.PI / 2; rotateFace('bottom', angle, currentLayers); break;
         default: break;
     }
 });
