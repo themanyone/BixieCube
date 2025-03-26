@@ -2,10 +2,6 @@ import * as THREE from 'https://unpkg.com/three/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 import { RoundedBoxGeometry } from 'https://unpkg.com/three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
-// Get rid of the loading screen
-const fc = document.querySelector("#game-container");
-fc.parentElement.removeChild(fc);
-
 // Create a canvas texture for a colored face with a letter label
 function createFaceTexture(color, letter) {
     const size = 256;
@@ -42,7 +38,7 @@ export const faceDefinitions = [
 // Default material for unlabelled (inner) faces
 //export const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0x111111 });
 
-// Initialize scene, camera, and renderer
+// Initialize scene, camera, and renderer with transparency enabled
 export const scene = new THREE.Scene();
 export const camera = new THREE.PerspectiveCamera(
     75,
@@ -50,7 +46,8 @@ export const camera = new THREE.PerspectiveCamera(
     0.1,
     1000
 );
-export const renderer = new THREE.WebGLRenderer();
+export const renderer = new THREE.WebGLRenderer({ alpha: true });
+renderer.setClearColor(0x000000, 0);  // Set alpha to 0 for a transparent background
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -204,7 +201,9 @@ function updateCubeAlpha(newAlpha) {
                 // Render both sides to fix back-face culling issues
                 mat.side = newAlpha < 1 ? THREE.DoubleSide : THREE.FrontSide;
                 // Also increase emissiveIntensity inversely with alpha
-                mat.emissiveIntensity = 0.5 - newAlpha;
+                mat.emissiveIntensity = 0.3 - newAlpha;
+                // And increase light intensity inversely with alpha
+                ambientLight.intensity = 1 - newAlpha;
                 mat.needsUpdate = true;
             });
         }
@@ -314,4 +313,19 @@ document.getElementById('numPerAxisInput').addEventListener('change', (event) =>
 document.getElementById('resetCube').addEventListener('click', () => {
     camera.position.z = 2 + numPerAxis;
     buildCube();
+});
+
+// Add drag and drop functionality to update the page background image
+document.addEventListener('dragover', (event) => {
+    event.preventDefault();
+});
+
+document.addEventListener('drop', (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const imageUrl = URL.createObjectURL(file);
+        document.body.style.backgroundImage = `url(${imageUrl})`;
+        document.body.style.backgroundSize = 'cover';
+    }
 });
