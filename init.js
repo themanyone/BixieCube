@@ -98,6 +98,9 @@ function buildCube() {
                 child.material.dispose();
             }
         }
+        // Clear undo/redo
+        undoList = [];
+        redoList = [];
     }
     
     // Recalculate offset based on updated numPerAxis
@@ -257,7 +260,7 @@ configPopover.style.display = 'none';  // <-- Initialize as hidden
 configPopover.innerHTML = `
     <h3>Configuration Options</h3>
     <p>Adjust settings as needed.</p>
-    <p><strong>Gap:</strong> <input type="range" id="gapSize" min="0" max="1.0" step="0.01" value="${gap}" /></p>
+    <p><strong>Gap:</strong> <input type="range" id="gapSize" min="0" max="3.0" step="0.01" value="${gap}" /></p>
     <p><strong>Bevel:</strong> <input type="range" id="bevelInput" min="0.0" max="0.5" step="0.05" value="${bevel}" /></p>
     <p><strong>Alpha:</strong> <input type="range" id="alphaInput" min="0" max="1" step="0.01" value="1" /></p>
     <p><strong>Number per Axis:</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /></p>
