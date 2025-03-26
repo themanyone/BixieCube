@@ -1,18 +1,20 @@
-#RubyCubie
+#BixieCube
 
-A simple remake of the classic 3x3x3 Rubik's cube puzzle game with 2x2x2, 5x5x5, and now up to 9x9x9 cubes, selectable.
+A remake of the classic 3x3x3 [Rubik's Cube](https://en.wikipedia.org/wiki/Rubik%27s_Cube) puzzle game. Now with 2x2x2, 5x5x5, and now up to 9x9x9 cubes, selectable (more in code).
 
 ##Installation. 
 
 No instillation required. It runs in the browser using [threejs](https://threejs.org/).
 
-##Running 
+##Running
 
-* When a face key, any of "abcdef", is pressed, that face is rotated clockwise (e.g. 'a'). If shifted (or 'A') for example, it rotates the face counter-clockwise.
+* Touch (click) & drag faces to turn them. 
 
-* When a number key 2-9 is pressed, it determines how many layers should be rotated for the next face turn (e.g. '2a').
+* keyboard: If one of "abcdef", is pressed, that face is rotated clockwise. (Shift to rotate counter-clockwise).
 
-* Once the rotation finishes, we reset layers to 1, so you don't have to keep typing '1a', '1b', etc. Just type the lettr to rotate a sigle face.
+* Number keys 2-9 determine how many layers should be rotated on the next turn (e.g. '2a').
+
+* Once the rotation finishes, layers is reset to 1.
 
 ##Configuration
 

@@ -1,5 +1,5 @@
 import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-import { scene, camera, renderer, controls, rubyCube, cubieSize, gap, numPerAxis, getOffset } from './init.js';
+import { scene, camera, renderer, controls, bixieCube, cubieSize, gap, numPerAxis, getOffset } from './init.js';
 
 // Global flags, history, and queues for rotations.
 let isRotating = false;
@@ -21,37 +21,37 @@ function rotateFace(face, angle, layersCount = 1) {
     switch (face) {
         case 'front':
             boundary = getOffset() - ((layersCount - 1) * (cubieSize + gap));
-            rubyCube.children.forEach(cubie => { 
+            bixieCube.children.forEach(cubie => { 
                 if (cubie.position.z > boundary - eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'back':
             boundary = -getOffset() + ((layersCount - 1) * (cubieSize + gap));
-            rubyCube.children.forEach(cubie => { 
+            bixieCube.children.forEach(cubie => { 
                 if (cubie.position.z < boundary + eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'right':
             boundary = getOffset() - ((layersCount - 1) * (cubieSize + gap));
-            rubyCube.children.forEach(cubie => {
+            bixieCube.children.forEach(cubie => {
                 if (cubie.position.x > boundary - eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'left':
             boundary = -getOffset() + ((layersCount - 1) * (cubieSize + gap));
-            rubyCube.children.forEach(cubie => {
+            bixieCube.children.forEach(cubie => {
                 if (cubie.position.x < boundary + eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'top':
             boundary = getOffset() - ((layersCount - 1) * (cubieSize + gap));
-            rubyCube.children.forEach(cubie => {
+            bixieCube.children.forEach(cubie => {
                 if (cubie.position.y > boundary - eps) { rotatingCubies.push(cubie); }
             });
             break;
         case 'bottom':
             boundary = -getOffset() + ((layersCount - 1) * (cubieSize + gap));
-            rubyCube.children.forEach(cubie => {
+            bixieCube.children.forEach(cubie => {
                 if (cubie.position.y < boundary + eps) { rotatingCubies.push(cubie); }
             });
             break;
@@ -60,7 +60,7 @@ function rotateFace(face, angle, layersCount = 1) {
     const tempGroup = new THREE.Group();
     scene.add(tempGroup);
     rotatingCubies.forEach(cubie => {
-        rubyCube.remove(cubie);
+        bixieCube.remove(cubie);
         tempGroup.add(cubie);
     });
     
@@ -96,7 +96,7 @@ function rotateFace(face, angle, layersCount = 1) {
                 cubie.userData.i = Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
                 cubie.userData.j = Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
                 cubie.userData.k = Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
-                rubyCube.add(cubie);
+                bixieCube.add(cubie);
             });
             scene.remove(tempGroup);
             isRotating = false;
@@ -143,7 +143,7 @@ function checkCubeSolved() {
         { test: cubie => Math.abs(cubie.position.y + getOffset()) < eps, face: 'bottom', materialIndex: 3 }
     ];
     
-    rubyCube.children.forEach(cubie => {
+    bixieCube.children.forEach(cubie => {
         checkFaces.forEach(({ test, face, materialIndex }) => {
             if (test(cubie)) {
                 faceColors[face].add(cubie.material[materialIndex].color.getHex());
@@ -263,11 +263,11 @@ renderer.domElement.addEventListener('mousedown', (event) => {
     );
     raycaster.setFromCamera(mouse, camera);
     // Intersect with the cube's children to get a hit point on the cube.
-    const intersects = raycaster.intersectObjects(rubyCube.children, true);
+    const intersects = raycaster.intersectObjects(bixieCube.children, true);
     if (intersects.length > 0) {
         const intersection = intersects[0];
         // Create a bounding box around the entire cube.
-        const box = new THREE.Box3().setFromObject(rubyCube);
+        const box = new THREE.Box3().setFromObject(bixieCube);
         // Compare the intersection point to each face of the box.
         const faceCandidates = getFaceCandidates(intersection, box);
         selectedFace = faceCandidates[0].face;

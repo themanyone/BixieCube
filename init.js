@@ -72,10 +72,10 @@ const defaultMaterial = new THREE.MeshStandardMaterial({
 });
 
 // Create group for cube pieces (cubies)
-export const rubyCube = new THREE.Group();
-scene.add(rubyCube);
+export const bixieCube = new THREE.Group();
+scene.add(bixieCube);
 
-// Parameters for a Rubik's cube
+// Parameters
 export let cubieSize = 1;
 export let bevel = 0.1;
 export let gap = 0.05;
@@ -93,10 +93,10 @@ function isCenter(index) {
 }
 
 function buildCube() {
-    // Clear previous cubies from rubyCube group
-    while (rubyCube.children.length > 0) {
-        const child = rubyCube.children[0];
-        rubyCube.remove(child);
+    // Clear previous cubies from bixieCube group
+    while (bixieCube.children.length > 0) {
+        const child = bixieCube.children[0];
+        bixieCube.remove(child);
         if (child.geometry) child.geometry.dispose();
         if (child.material) {
             if (Array.isArray(child.material)) {
@@ -160,7 +160,7 @@ function buildCube() {
                 cubie.position.set(x, y, z);
                 // Store the grid indices so we can update positions later
                 cubie.userData = { i, j, k };
-                rubyCube.add(cubie);
+                bixieCube.add(cubie);
             }
         }
     }
@@ -169,7 +169,7 @@ function buildCube() {
 // New function to update the cubies' bevel based on the current value
 function updateCubeBevel(newBevel) {
     bevel = newBevel;
-    rubyCube.children.forEach(cubie => {
+    bixieCube.children.forEach(cubie => {
         if (cubie.geometry) {
             cubie.geometry.dispose();
         }
@@ -180,7 +180,7 @@ function updateCubeBevel(newBevel) {
 // New function to update the cubies' positions based on the current gap
 function updateCubePositions(gap) {
     const currentOffset = ((numPerAxis - 1) * (cubieSize + gap)) / 2;
-    rubyCube.children.forEach(cubie => {
+    bixieCube.children.forEach(cubie => {
         const { i, j, k } = cubie.userData;
         cubie.position.set(
             i * (cubieSize + gap) - currentOffset,
@@ -192,7 +192,7 @@ function updateCubePositions(gap) {
 
 // New function to update the cubies' alpha based on the current value
 function updateCubeAlpha(newAlpha) {
-    rubyCube.children.forEach(cubie => {
+    bixieCube.children.forEach(cubie => {
         if (cubie.material) {
             const materials = Array.isArray(cubie.material)
                 ? cubie.material
@@ -250,7 +250,7 @@ popover.innerHTML = `
     <p>Click the hamburger icon to show/hide this popover.</p>
     <p>Click anywhere outside the popover to close it.</p>
     <hr>
-    <p><strong>Project Info:</strong> RubyCubie</p>
+    <p><strong>Project Info:</strong> BixieCube</p>
     <p><strong>Updates:</strong> v1.0 - initial release</p>
 `;
 document.body.appendChild(popover);
