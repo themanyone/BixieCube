@@ -1,6 +1,16 @@
 # BixieCube
 
-A remake of the classic 3x3x3 [Rubik's Cube](https://en.wikipedia.org/wiki/Rubik%27s_Cube) puzzle game. Now with 2x2x2, 5x5x5, and now up to 9x9x9 cubes, selectable (more in code).
+A meme cube remake of the classic 3x3x3 [Rubik's Cube](https://en.wikipedia.org/wiki/Rubik%27s_Cube) puzzle game.
+
+##Features
+
+* drag and drop images onto cube
+* variable number of faces from 2x2 to 9x9.
+* alpha transparency
+
+![demo pic](bixiecube2.webp)
+![demo pic](bixiecube5.webp)
+![demo pic](bixiecube9.webp)
 
 ## Installation
 
