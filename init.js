@@ -285,8 +285,8 @@ helpPopover.style.right = '60px'; // Position it next to the gear icon
 helpPopover.style.display = 'none';  // Initialize as hidden
 helpPopover.innerHTML = `
     <h3>Help</h3>
-    <p>Use the mouse to rotate and click to interact with the cube.</p>
-    <p>Adjust the cube settings using the configuration panel (gear icon).</p>
+    <p>Touch (click) & drag faces to turn them.</p>
+    <p>Adjust settings using the configuration panel (gear icon).</p>
     <p>Drag and drop an image on background to change wallpaper.</p>
     <p>Drop images on cube faces to change their texture.</p>
     <p>Right-click: Pan the camera</p>

@@ -4,22 +4,26 @@ A remake of the classic 3x3x3 [Rubik's Cube](https://en.wikipedia.org/wiki/Rubik
 
 ##Installation. 
 
-No instillation required. It runs in the browser using [threejs](https://threejs.org/).
+No instillation required. It runs in the browser using [Three.js](https://threejs.org/). (An optional and separate install, if offline use is desired).
 
 ##Running
 
-* Touch (click) & drag faces to turn them. 
+* Touch (click) & drag faces to turn them.
 
-* keyboard: If one of "abcdef", is pressed, that face is rotated clockwise. (Shift to rotate counter-clockwise).
+* Drop images on cube faces and background to change textures and wallpaper.
 
-* Number keys 2-9 determine how many layers should be rotated on the next turn (e.g. '2a').
+* Customize by clicking on the gear icon.
 
-* Once the rotation finishes, layers is reset to 1.
+###Keyboard shortcuts
+
+* "abcdef": rotate faces clockwise. (Shift to rotate counter-clockwise).
+
+* Number keys 1-9 determine how many layers should be rotated at a time.
 
 ##Configuration
 
 * Click the gear icon to change the number of Cubies per axis. 
-##Explor Further
+##Explore Further
 - GitHub https://github.com/themanyone
 - YouTube https://www.youtube.com/themanyone
 - Mastodon https://mastodon.social/@themanyone
