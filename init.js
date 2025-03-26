@@ -235,6 +235,7 @@ const popover = document.createElement('div');
 popover.classList.add('popover');
 popover.style.top = '60px';
 popover.style.left = '20px';
+popover.style.display = 'none';  // <-- Initialize as hidden
 popover.innerHTML = `
     <h3>Keyboard Help</h3>
     <p>Right-click: Move camera</p>
@@ -270,6 +271,7 @@ const configPopover = document.createElement('div');
 configPopover.classList.add('popover');
 configPopover.style.top = '60px';
 configPopover.style.right = '20px';
+configPopover.style.display = 'none';  // <-- Initialize as hidden
 configPopover.innerHTML = `
     <h3>Configuration Options</h3>
     <p>Adjust settings as needed.</p>
@@ -327,5 +329,14 @@ document.addEventListener('drop', (event) => {
         const imageUrl = URL.createObjectURL(file);
         document.body.style.backgroundImage = `url(${imageUrl})`;
         document.body.style.backgroundSize = 'cover';
+    }
+});
+
+// Close popovers when clicking outside popover or icon elements
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.popover') && !event.target.closest('.icon')) {
+        document.querySelectorAll('.popover').forEach(popover => {
+            popover.style.display = 'none';
+        });
     }
 });
