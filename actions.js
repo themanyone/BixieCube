@@ -227,9 +227,48 @@ function projectToScreen(pos3D) {
     };
 }
 
-// Replace the previous mousedown/mouseup face dragging handlers for rubyCube.
-
+// Face dragging handles
 let selectedFace = null;
+
+function getFaceCandidates(intersection, box) {
+    const diffRight  = Math.abs(intersection.point.x - box.max.x);
+    const diffLeft   = Math.abs(intersection.point.x - box.min.x);
+    const diffTop    = Math.abs(intersection.point.y - box.max.y);
+    const diffBottom = Math.abs(intersection.point.y - box.min.y);
+    const diffFront  = Math.abs(intersection.point.z - box.max.z);
+    const diffBack   = Math.abs(intersection.point.z - box.min.z);
+    const faceCandidates = [
+        { face: 'right', diff: diffRight },
+        { face: 'left',  diff: diffLeft },
+        { face: 'top',   diff: diffTop },
+        { face: 'bottom',diff: diffBottom },
+        { face: 'front', diff: diffFront },
+        { face: 'back',  diff: diffBack }
+    ];
+    faceCandidates.sort((a, b) => a.diff - b.diff);
+    selectedFace = faceCandidates[0].face;
+    return faceCandidates;
+}
+
+function computeFaceCenterScreen(box, face, camera, renderer) {
+    const centerX = (box.min.x + box.max.x) / 2;
+    const centerY = (box.min.y + box.max.y) / 2;
+    const centerZ = (box.min.z + box.max.z) / 2;
+    const faceCenter3D = new THREE.Vector3();
+    switch (face) {
+        case 'right':  faceCenter3D.set(box.max.x, centerY, centerZ); break;
+        case 'left':   faceCenter3D.set(box.min.x, centerY, centerZ); break;
+        case 'top':    faceCenter3D.set(centerX, box.max.y, centerZ); break;
+        case 'bottom': faceCenter3D.set(centerX, box.min.y, centerZ); break;
+        case 'front':  faceCenter3D.set(centerX, centerY, box.max.z); break;
+        case 'back':   faceCenter3D.set(centerX, centerY, box.min.z); break;
+    }
+    const pos = faceCenter3D.clone().project(camera);
+    return {
+        x: (pos.x + 1) / 2 * renderer.domElement.clientWidth,
+        y: (-pos.y + 1) / 2 * renderer.domElement.clientHeight
+    };
+}
 
 renderer.domElement.addEventListener('mousedown', (event) => {
     const mouse = new THREE.Vector2(
@@ -244,42 +283,11 @@ renderer.domElement.addEventListener('mousedown', (event) => {
         // Create a bounding box around the entire cube.
         const box = new THREE.Box3().setFromObject(rubyCube);
         // Compare the intersection point to each face of the box.
-        const diffRight  = Math.abs(intersection.point.x - box.max.x);
-        const diffLeft   = Math.abs(intersection.point.x - box.min.x);
-        const diffTop    = Math.abs(intersection.point.y - box.max.y);
-        const diffBottom = Math.abs(intersection.point.y - box.min.y);
-        const diffFront  = Math.abs(intersection.point.z - box.max.z);
-        const diffBack   = Math.abs(intersection.point.z - box.min.z);
-        const faceCandidates = [
-            { face: 'right', diff: diffRight },
-            { face: 'left',  diff: diffLeft },
-            { face: 'top',   diff: diffTop },
-            { face: 'bottom',diff: diffBottom },
-            { face: 'front', diff: diffFront },
-            { face: 'back',  diff: diffBack }
-        ];
-        faceCandidates.sort((a, b) => a.diff - b.diff);
+        const faceCandidates = getFaceCandidates(intersection, box);
         selectedFace = faceCandidates[0].face;
         
         // Compute the 3D center of the selected face.
-        const centerX = (box.min.x + box.max.x) / 2;
-        const centerY = (box.min.y + box.max.y) / 2;
-        const centerZ = (box.min.z + box.max.z) / 2;
-        let faceCenter3D = new THREE.Vector3();
-        switch (selectedFace) {
-            case 'right':  faceCenter3D.set(box.max.x, centerY, centerZ); break;
-            case 'left':   faceCenter3D.set(box.min.x, centerY, centerZ); break;
-            case 'top':    faceCenter3D.set(centerX, box.max.y, centerZ); break;
-            case 'bottom': faceCenter3D.set(centerX, box.min.y, centerZ); break;
-            case 'front':  faceCenter3D.set(centerX, centerY, box.max.z); break;
-            case 'back':   faceCenter3D.set(centerX, centerY, box.min.z); break;
-        }
-        // Project the face center to screen coordinates.
-        const pos = faceCenter3D.clone().project(camera);
-        faceCenterScreen = {
-            x: (pos.x + 1) / 2 * renderer.domElement.clientWidth,
-            y: (-pos.y + 1) / 2 * renderer.domElement.clientHeight
-        };
+        faceCenterScreen = computeFaceCenterScreen(box, selectedFace, camera, renderer);
         dragStart = { x: event.clientX, y: event.clientY };
         controls.enabled = false;
     }
