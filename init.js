@@ -57,14 +57,10 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.2;  // increased damping for tighter rotation
 controls.rotateSpeed = 0.7;    // reduced rotation speed for a more controlled feel
 
-// Add ambient light to properly light transparent materials
-const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Soft white light
-scene.add(ambientLight);
-
 // Add an emissive material to make the cube glow from within
 const defaultMaterial = new THREE.MeshStandardMaterial({
     emissive: 0xffffff, // White glow
-    emissiveIntensity: 0.0, // Adjust intensity as needed
+    emissiveIntensity: 0.01, // Adjust intensity as needed
     color: 0x000000 // Base color
 });
 
@@ -197,13 +193,11 @@ function updateCubeAlpha(newAlpha) {
             materials.forEach(mat => {
                 mat.opacity = newAlpha;
                 mat.transparent = newAlpha < 1;
-                mat.depthWrite = newAlpha === 1;
+                // mat.depthWrite = newAlpha === 1;
                 // Render both sides to fix back-face culling issues
                 mat.side = newAlpha < 1 ? THREE.DoubleSide : THREE.FrontSide;
                 // Also increase emissiveIntensity inversely with alpha
                 mat.emissiveIntensity = 0.3 - newAlpha;
-                // And increase light intensity inversely with alpha
-                ambientLight.intensity = 1 - newAlpha;
                 mat.needsUpdate = true;
             });
         }
@@ -290,8 +284,11 @@ helpPopover.innerHTML = `
     <h3>Help</h3>
     <p>Use the mouse to rotate and click to interact with the cube.</p>
     <p>Adjust the cube settings using the configuration panel (gear icon).</p>
-    <p>Right-click: Move camera</p>
+    <p>Drag and drop an image on background to change wallpaper.</p>
+    <p>Drop images on cube faces to change their texture.</p>
+    <p>Right-click: Pan the camera</p>
     <p>Click or drag to rotate scene</p>
+    <p>Scroll to zoom in/out</p>
     <p>Click the hamburger icon to show/hide this popover.</p>
     <p>Click anywhere outside the popover to close it.</p>
     <hr>
@@ -356,14 +353,4 @@ document.getElementById('resetCube').addEventListener('click', () => {
 // Add drag and drop functionality to update the page background image
 document.addEventListener('dragover', (event) => {
     event.preventDefault();
-});
-
-document.addEventListener('drop', (event) => {
-    event.preventDefault();
-    const file = event.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-        const imageUrl = URL.createObjectURL(file);
-        document.body.style.backgroundImage = `url(${imageUrl})`;
-        document.body.style.backgroundSize = 'cover';
-    }
 });

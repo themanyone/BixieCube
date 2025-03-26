@@ -305,3 +305,141 @@ renderer.domElement.addEventListener('mouseup', (event) => {
     dragStart = null;
     controls.enabled = true;
 });
+
+// Add drop event handlers and helper function to paint a face with a dropped image
+
+renderer.domElement.addEventListener('dragover', (event) => {
+    event.preventDefault();
+});
+
+renderer.domElement.addEventListener('drop', (event) => {
+    event.preventDefault();
+    if (event.dataTransfer.files.length === 0) return;
+    const file = event.dataTransfer.files[0];
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const imgUrl = e.target.result;
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.load(imgUrl, (texture) => {
+            const mouse = new THREE.Vector2(
+                (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
+                -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
+            );
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(bixieCube.children, true);
+            if (intersects.length > 0) {
+                const intersection = intersects[0];
+                const box = new THREE.Box3().setFromObject(bixieCube);
+                const faceCandidates = getFaceCandidates(intersection, box);
+                const targetFace = faceCandidates[0].face;
+                paintFacesWithImage(targetFace, texture);
+            } else {
+                // Drop occurred outside the cube's bounding box: paint the body.
+                paintBody(imgUrl);
+            }
+        });
+    };
+    reader.readAsDataURL(file);
+});
+
+function paintFacesWithImage(face, texture) {
+
+    bixieCube.children.forEach(cubie => {
+    const currentOffset = getOffset();
+        let qualifies = false;
+        let i, j;
+        // Use cubieSize as a tolerance threshold.
+        switch (face) {
+            case 'front':
+                qualifies = Math.abs(cubie.position.z - currentOffset) < cubieSize / 2;
+                if (qualifies) {
+                    i = cubie.userData.i !== undefined ? cubie.userData.i :
+                    Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
+                    j = cubie.userData.j !== undefined ? cubie.userData.j :
+                        Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                    applyTextureToCubie(cubie, face, texture, i, j);
+                }
+                break;
+            case 'back':
+                qualifies = Math.abs(cubie.position.z + currentOffset) < cubieSize / 2;
+                if (qualifies) {
+                    i = cubie.userData.i !== undefined ? cubie.userData.i :
+                    Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
+                    j = cubie.userData.j !== undefined ? cubie.userData.j :
+                        Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                    applyTextureToCubie(cubie, face, texture, numPerAxis - i - 1, j);
+                }
+                break;
+            case 'right':
+                qualifies = Math.abs(cubie.position.x - currentOffset) < cubieSize / 2;
+                if (qualifies) {
+                    j = cubie.userData.k !== undefined ? cubie.userData.k :
+                        Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
+                    i = cubie.userData.j !== undefined ? cubie.userData.j :
+                        Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                        applyTextureToCubie(cubie, face, texture, numPerAxis - j - 1, i);
+                }
+                break;
+            case 'left':
+                qualifies = Math.abs(cubie.position.x + currentOffset) < cubieSize / 2;
+                if (qualifies) {
+                    j = cubie.userData.k !== undefined ? cubie.userData.k :
+                        Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
+                    i = cubie.userData.j !== undefined ? cubie.userData.j :
+                        Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                    applyTextureToCubie(cubie, face, texture, j, i);
+                }
+                break;
+            case 'top':
+                qualifies = Math.abs(cubie.position.y - currentOffset) < cubieSize / 2;
+                if (qualifies) {
+                    i = cubie.userData.i !== undefined ? cubie.userData.i :
+                        Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
+                    j = cubie.userData.k !== undefined ? cubie.userData.k :
+                        Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
+                        applyTextureToCubie(cubie, face, texture, i, numPerAxis - j - 1);
+                }
+                break;
+            case 'bottom':
+                qualifies = Math.abs(cubie.position.y + currentOffset) < cubieSize / 2;
+                if (qualifies) {
+                    i = cubie.userData.i !== undefined ? cubie.userData.i :
+                        Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
+                    j = cubie.userData.k !== undefined ? cubie.userData.k :
+                        Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
+                        applyTextureToCubie(cubie, face, texture, i, j);
+                }
+                break;
+        }
+    });
+}
+
+
+function applyTextureToCubie(cubie, face, texture, i, j) {
+    // Clone the texture so each cubie gets its own instance.
+    const cubieTexture = texture.clone();
+    // Force texture to use sRGB encoding to fix brightness.
+    cubieTexture.encoding = THREE.sRGBEncoding;
+    cubieTexture.wrapS = THREE.ClampToEdgeWrapping;
+    cubieTexture.wrapT = THREE.ClampToEdgeWrapping;
+    // Mapping: right:0, left:1, top:2, bottom:3, front:4, back:5
+    const faceMaterialIndex = { right: 0, left: 1, top: 2, bottom: 3, front: 4, back: 5 }[face];
+    const currentOffset = getOffset();
+    const totalCubies = numPerAxis; // number of cubies per face
+
+    // Set the texture repeat and offset so that each cubie only shows its sub-area.
+    cubieTexture.repeat.set(1 / totalCubies, 1 / totalCubies);
+    cubieTexture.offset.set(i / totalCubies, j / totalCubies);
+    cubieTexture.needsUpdate = true;
+
+    const oldMat = cubie.material[faceMaterialIndex];
+    const newMat = oldMat.clone();
+    newMat.map = cubieTexture;
+    cubie.material[faceMaterialIndex] = newMat;
+}
+
+function paintBody(imageUrl) {
+    document.body.style.backgroundImage = `url(${imageUrl})`;
+    document.body.style.backgroundSize = 'cover';
+}
