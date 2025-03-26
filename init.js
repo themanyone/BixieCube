@@ -98,9 +98,6 @@ function buildCube() {
                 child.material.dispose();
             }
         }
-        // Clear undo/redo
-        undoList = [];
-        redoList = [];
     }
     
     // Recalculate offset based on updated numPerAxis
@@ -357,3 +354,29 @@ document.getElementById('resetCube').addEventListener('click', () => {
 document.addEventListener('dragover', (event) => {
     event.preventDefault();
 });
+
+// Create Start Game button
+const startGameBtn = document.createElement('button');
+startGameBtn.textContent = 'Start Game';
+startGameBtn.id = 'startGameBtn';
+startGameBtn.style.position = 'fixed';
+startGameBtn.style.bottom = '20px';
+startGameBtn.style.left = '20px';
+startGameBtn.style.padding = '10px 20px';
+startGameBtn.style.fontSize = '16px';
+document.body.appendChild(startGameBtn);
+
+// Create clock timer popover
+const timerPopover = document.createElement('div');
+timerPopover.id = 'timerPopover';
+timerPopover.classList.add('overlay');
+startGameBtn.style.display = 'block';
+timerPopover.style.position = 'fixed';
+timerPopover.style.bottom = '0';
+timerPopover.style.left = '50%';
+timerPopover.style.transform = 'translateX(-50%)';
+timerPopover.innerHTML = `
+    <h1 id="timerDisplay">01:00</h1>
+`;
+document.body.appendChild(timerPopover);
+

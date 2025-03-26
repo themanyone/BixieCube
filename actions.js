@@ -4,7 +4,7 @@ import { scene, camera, renderer, controls, bixieCube, cubieSize, gap, numPerAxi
 // Global flags, history, and queues for rotations.
 let isRotating = false;
 const rotationQueue = [];
-const undoQueue = [];  // <-- new undo queue
+let undoQueue = [];  // <-- new undo queue
 let moveHistory = [];
 let isUndoing = false;
 let currentLayers = 1;
@@ -100,12 +100,16 @@ function rotateFace(face, angle, layersCount = 1) {
             });
             scene.remove(tempGroup);
             isRotating = false;
+
             if (!isUndoing) {
-                moveHistory.push({ face, angle, layersCount });
                 if (checkCubeSolved()) {
                     console.log("Cube solved!");
+                    stopGame();
+                    return;
                 }
+                moveHistory.push({ face, angle, layersCount });
             }
+
             if (undoQueue.length > 0) {
                 const nextUndo = undoQueue.shift();
                 isUndoing = true;
@@ -443,3 +447,80 @@ function paintBody(imageUrl) {
     document.body.style.backgroundImage = `url(${imageUrl})`;
     document.body.style.backgroundSize = 'cover';
 }
+
+export function scrambleCube() {
+    const faces = ['front', 'back', 'left', 'right', 'top', 'bottom'];
+    for (let i = 0; i < 3; i++) {
+        const randomFace = faces[Math.floor(Math.random() * faces.length)];
+        const randomAngle = Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2;
+        rotateFace(randomFace, randomAngle, 1);
+    }
+}
+
+// Format seconds as MM:SS
+function formatTime(seconds) {
+    const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+    const secs = String(seconds % 60).padStart(2, '0');
+    return `${mins}:${secs}`;
+}
+
+let gameTime = 60; // game time in seconds (1 minute)
+let timerInterval = null;
+
+// Start game button click starts timer and shows popover
+startGameBtn.addEventListener('click', (e) => {
+    timerPopover.style.display = 'block';
+    if (e.target.textContent === 'Reset') {
+        e.target.textContent = 'Start Game';
+        stopGame();
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        return;
+    }
+    e.target.textContent = 'Reset';
+    scrambleCube();
+    let gameTime = 0;
+    timerPopover.style.display = 'block';
+    document.getElementById('timerDisplay').textContent = formatTime(gameTime);
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        gameTime++
+        if (gameTime <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById('timerDisplay').textContent = "Time's up!";
+        } else {
+            document.getElementById('timerDisplay').textContent = formatTime(gameTime);
+        }
+    }, 1000);
+});
+
+// Hide timer popover (and stop timer) when game is over
+function stopGame() {
+    // timerPopover.style.display = 'none';
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        // Clear all pending actions
+        undoQueue.length = 0;
+        rotationQueue.length = 0;
+        moveHistory.length = 0;
+        isRotating = false;
+        isUndoing = false;
+    }
+}
+
+document.getElementById('numPerAxisInput').addEventListener('change', (event) => {
+    stopGame();
+    timerPopover.style.display = 'none';
+    // timerPopover.textContent = '00:00';
+    startGameBtn.textContent = 'Start Game';
+});
+
+document.getElementById('resetCube').addEventListener('click', () => {
+    stopGame();
+    timerPopover.style.display = 'none';
+    // timerPopover.textContent = '00:00';
+    startGameBtn.textContent = 'Start Game';
+});

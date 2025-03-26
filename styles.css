@@ -17,18 +17,18 @@ body {
     justify-content: center;
     align-items: center;
 }
-#overlay {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0);
+.overlay {
     display: flex;
     justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 1;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    display: none;
+    z-index: 1000;
 }
-#overlay h1 {
+.overlay h1 {
     color: #ce496b;
     font-size: 2rem;
     margin-bottom: 1rem;
