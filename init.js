@@ -67,7 +67,7 @@ scene.add(ambientLight);
 // Add an emissive material to make the cube glow from within
 const defaultMaterial = new THREE.MeshStandardMaterial({
     emissive: 0xffffff, // White glow
-    emissiveIntensity: 0.1, // Adjust intensity as needed
+    emissiveIntensity: 0.0, // Adjust intensity as needed
     color: 0x000000 // Base color
 });
 
@@ -203,6 +203,8 @@ function updateCubeAlpha(newAlpha) {
                 mat.depthWrite = newAlpha === 1;
                 // Render both sides to fix back-face culling issues
                 mat.side = newAlpha < 1 ? THREE.DoubleSide : THREE.FrontSide;
+                // Also increase emissiveIntensity inversely with alpha
+                mat.emissiveIntensity = 0.5 - newAlpha;
                 mat.needsUpdate = true;
             });
         }
