@@ -7,6 +7,27 @@
     <meta name="description" content="3D game using Three.js">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css?v=1.1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="images/cube.gif"/>
+
+    <!-- css fireworks from //codepen.io/yshlin/pen/ylDEk -->
+    <link rel="stylesheet" media="screen" href="firework.css">
+
+    <!-- Waving text from https://codepen.io/molefrog/pen/ieJbo -->
+    <link rel="stylesheet" media="screen" href="wavetext.css">
+
+    <!-- Twist sound from https://freesound.org/people/Rach_Capache/sounds/366429/# -->
+    <audio class="sound" id="twist_sound" preload="auto">
+      <source src="media/twist.mp3" type="audio/mp3">
+      <source src="media/twist.ogg" type="audio/ogg">
+    </audio>
+    <!-- Fireworks sound from https://freesound.org/people/Rach_Capache/sounds/366429/# -->
+    <audio class="sound" id="fireworks_sound" preload="auto">
+      <source src="media/fireworks.mp3" type="audio/mp3">
+      <source src="media/fireworks.ogg" type="audio/ogg">
+    </audio>
+    
     <script type="importmap">
     {
         "imports": {
@@ -16,6 +37,13 @@
     </script>
 </head>
 <body>
+    <div class="pyro">
+      <div class="before"></div>
+      <div class="after"></div>
+    </div>
+    <div class="wavetext"><script  src="wavetext.js"></script>
+    </div>
+    
     <h1>BixieCube</h1>
     <script type="module" src="init.js"></script>
     <script type="module" src="actions.js"></script>

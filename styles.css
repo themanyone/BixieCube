@@ -66,3 +66,30 @@ body {
     top: 25px;
     right: 60px;
 }
+
+.pyro {
+    display: none;
+}
+
+.pyro > .before {
+    border: 5px solid rgba(255, 0, 0, 0.5);
+}
+
+.pyro > .after {
+    border: 5px solid rgba(255, 255, 0, 0.5);
+    animation-delay: -1s;
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.wavtext {
+    font-size: 1.5rem;
+    color: #ce496b;
+    margin-bottom: 1rem;
+    display: none;
+}

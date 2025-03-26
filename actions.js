@@ -11,6 +11,9 @@ let currentLayers = 1;
 const eps = 0.001;
 
 function rotateFace(face, angle, layersCount = 1) {
+    // Play twist_sound.
+    const audio = document.getElementById('twist_sound');
+    audio.play();
     if (isRotating) {
         rotationQueue.push({ face, angle, layersCount });
         return;
@@ -104,6 +107,7 @@ function rotateFace(face, angle, layersCount = 1) {
             if (!isUndoing) {
                 if (checkCubeSolved()) {
                     console.log("Cube solved!");
+                    celebrateWin(); // <-- Trigger the celebration.
                     stopGame();
                     return;
                 }
@@ -524,3 +528,19 @@ document.getElementById('resetCube').addEventListener('click', () => {
     // timerPopover.textContent = '00:00';
     startGameBtn.textContent = 'Start Game';
 });
+
+// New function to celebrate winning.
+function celebrateWin() {
+    // Play fireworks sound.
+    const audio = document.getElementById('fireworks_sound');
+    audio.play();
+    const wt = document.querySelector(".wavetext");
+    const pyro = document.querySelector(".pyro");
+
+    wt.style.display = "block";
+    pyro.style.display = "block";
+    setTimeout(function(){
+        pyro.style.display = "none";
+        wt.style.display = "none";
+    }, 5000);
+}
