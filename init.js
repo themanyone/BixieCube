@@ -64,6 +64,10 @@ const defaultMaterial = new THREE.MeshStandardMaterial({
     color: 0x000000 // Base color
 });
 
+// Hide wavetext element
+wt = document.querySelector(".wavetext");
+wt.style.display = "none";
+
 // Create group for cube pieces (cubies)
 export const bixieCube = new THREE.Group();
 scene.add(bixieCube);
