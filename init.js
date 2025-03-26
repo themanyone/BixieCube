@@ -237,18 +237,6 @@ popover.style.top = '60px';
 popover.style.left = '20px';
 popover.style.display = 'none';  // <-- Initialize as hidden
 popover.innerHTML = `
-    <h3>Keyboard Help</h3>
-    <p>Right-click: Move camera</p>
-    <p>Click or drag to rotate scene</p>
-    <p>abcdf - Rotate face clockwise</p>
-    <p>ABCDF - Rotate face counterclockwise</p>
-    <p>2a 3b - Rotate face + layers</p>
-    <p>z - undo last move</p>
-    <p>r - redo last move</p>
-    <p>Space - Shuffle cube</p>
-    <p>Enter - Solve cube</p>
-    <p>Click the hamburger icon to show/hide this popover.</p>
-    <p>Click anywhere outside the popover to close it.</p>
     <hr>
     <p><strong>Project Info:</strong> BixieCube</p>
     <p><strong>Updates:</strong> v1.0 - initial release</p>
@@ -302,7 +290,19 @@ helpPopover.innerHTML = `
     <h3>Help</h3>
     <p>Use the mouse to rotate and click to interact with the cube.</p>
     <p>Adjust the cube settings using the configuration panel (gear icon).</p>
-    <p>For keyboard commands, see the hamburger icon popover on the left.</p>
+    <p>Right-click: Move camera</p>
+    <p>Click or drag to rotate scene</p>
+    <p>Click the hamburger icon to show/hide this popover.</p>
+    <p>Click anywhere outside the popover to close it.</p>
+    <hr>
+    <h3>Keyboard Help</h3>
+    <p>abcdf - Rotate face clockwise</p>
+    <p>ABCDF - Rotate face counterclockwise</p>
+    <p>2a 3b - Rotate face + layers</p>
+    <p>z - undo last move</p>
+    <p>r - redo last move</p>
+    <p>Space - Shuffle cube</p>
+    <p>Enter - Solve cube</p>
 `;
 document.body.appendChild(helpPopover);
 
