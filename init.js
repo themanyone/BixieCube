@@ -285,6 +285,42 @@ configPopover.innerHTML = `
 `;
 document.body.appendChild(configPopover);
 
+// Create help icon element
+const helpIcon = document.createElement('div');
+helpIcon.innerHTML = '&#x2753;'; // Unicode for a question mark help icon
+helpIcon.style.fontSize = '25px'; // Reduce the font size of the help icon
+helpIcon.classList.add('icon', 'help-icon');
+document.body.appendChild(helpIcon);
+
+// Create help popover element
+const helpPopover = document.createElement('div');
+helpPopover.classList.add('popover');
+helpPopover.style.top = '60px';
+helpPopover.style.right = '60px'; // Position it next to the gear icon
+helpPopover.style.display = 'none';  // Initialize as hidden
+helpPopover.innerHTML = `
+    <h3>Help</h3>
+    <p>Use the mouse to rotate and click to interact with the cube.</p>
+    <p>Adjust the cube settings using the configuration panel (gear icon).</p>
+    <p>For keyboard commands, see the hamburger icon popover on the left.</p>
+`;
+document.body.appendChild(helpPopover);
+
+// Toggle help popover on help icon click
+helpIcon.addEventListener('click', () => {
+    helpPopover.style.display = (helpPopover.style.display === 'none') ? 'block' : 'none';
+});
+
+// Close popovers when clicking outside popover or icon elements
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.popover') && !event.target.closest('.icon')) {
+        document.querySelectorAll('.popover').forEach(popover => {
+            popover.style.display = 'none';
+        });
+    }
+});
+
+
 // Toggle configuration popover on gear icon click
 gearIcon.addEventListener('click', () => {
     configPopover.style.display = (configPopover.style.display === 'none') ? 'block' : 'none';
@@ -329,14 +365,5 @@ document.addEventListener('drop', (event) => {
         const imageUrl = URL.createObjectURL(file);
         document.body.style.backgroundImage = `url(${imageUrl})`;
         document.body.style.backgroundSize = 'cover';
-    }
-});
-
-// Close popovers when clicking outside popover or icon elements
-document.addEventListener('click', (event) => {
-    if (!event.target.closest('.popover') && !event.target.closest('.icon')) {
-        document.querySelectorAll('.popover').forEach(popover => {
-            popover.style.display = 'none';
-        });
     }
 });
