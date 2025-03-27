@@ -116,16 +116,15 @@ function rotateFace(face, angle, layersCount = 1) {
 
             if (undoQueue.length > 0) {
                 const nextUndo = undoQueue.shift();
-                isUndoing = true;
                 rotateFace(nextUndo.face, nextUndo.angle, nextUndo.layersCount);
             } else if (rotationQueue.length > 0) {
                 const next = rotationQueue.shift();
                 rotateFace(next.face, next.angle, next.layersCount);
-            }
-            currentLayers = 1;
-            if (isUndoing) {
+            } else {
+                // End the undo chain only when no more undo moves are queued.
                 isUndoing = false;
             }
+            currentLayers = 1;
         }
     }
     requestAnimationFrame(animateRotation);
