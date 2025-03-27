@@ -484,18 +484,16 @@ startGameBtn.addEventListener('click', (e) => {
     }
     e.target.textContent = 'Reset';
     scrambleCube();
+    setTimeout(() => {
+        moveHistory.length = 0; // <-- Reset the undo queue when starting a new game.
+    }, 2000);
     let gameTime = 0;
     timerPopover.style.display = 'block';
     document.getElementById('timerDisplay').textContent = formatTime(gameTime);
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         gameTime++
-        if (gameTime <= 0) {
-            clearInterval(timerInterval);
-            document.getElementById('timerDisplay').textContent = "Time's up!";
-        } else {
-            document.getElementById('timerDisplay').textContent = formatTime(gameTime);
-        }
+        document.getElementById('timerDisplay').textContent = formatTime(gameTime);
     }, 1000);
 });
 
