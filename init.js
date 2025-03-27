@@ -234,10 +234,36 @@ popover.classList.add('popover');
 popover.style.top = '60px';
 popover.style.left = '20px';
 popover.style.display = 'none';  // <-- Initialize as hidden
-popover.innerHTML = `
-    <hr>
-    <p><strong>Project Info:</strong> BixieCube</p>
-    <p><strong>Updates:</strong> v1.0 - initial release</p>
+popover.innerHTML = `<h2>Contact</h2>
+
+<ul>
+<li>BixieCube <a href="https://github.com/themanyone/BixieCube"><span>project on GitHub</span></a></li>
+<li>YouTube <a href="https://www.youtube.com/themanyone"><span>https://www.youtube.com/themanyone</span></a></li>
+<li>Mastodon <a href="https://mastodon.social/@themanyone"><span>https://mastodon.social/@themanyone</span></a></li>
+<li>Linkedin <a href="https://www.linkedin.com/in/henry-kroll-iii-93860426/"><span>https://www.linkedin.com/in/henry-kroll-iii-93860426/</span></a></li>
+<li>Buy me a coffee <a href="https://buymeacoffee.com/isreality"><span>https://buymeacoffee.com/isreality</span></a></li>
+<li><a href="http://thenerdshow.com/" target="_blank">TheNerdShow.com</a></li>
+</ul>
+
+<h2>LICENSE</h2>
+
+<pre><code>BixieCube
+Copyright (C) 2025 by Henry Kroll III, DBA [TheNerdShow.com](http://thenerdshow.com/)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+</code></pre>
 `;
 document.body.appendChild(popover);
 
@@ -264,7 +290,7 @@ configPopover.innerHTML = `
     <p><strong>Gap:</strong> <input type="range" id="gapSize" min="0" max="3.0" step="0.01" value="${gap}" /></p>
     <p><strong>Bevel:</strong> <input type="range" id="bevelInput" min="0.0" max="0.5" step="0.05" value="${bevel}" /></p>
     <p><strong>Alpha:</strong> <input type="range" id="alphaInput" min="0" max="1" step="0.01" value="1" /></p>
-    <p><strong>Number per Axis:</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /></p>
+    <p><strong>2x2</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /><strong>9x9</strong></p>
     <p><button id="resetCube">Reset Cube</button></p>
     <hr>
     <p>Add more options here.</p>
@@ -363,11 +389,7 @@ document.addEventListener('dragover', (event) => {
 const startGameBtn = document.createElement('button');
 startGameBtn.textContent = 'Start Game';
 startGameBtn.id = 'startGameBtn';
-startGameBtn.style.position = 'fixed';
-startGameBtn.style.bottom = '20px';
-startGameBtn.style.left = '20px';
-startGameBtn.style.padding = '10px 20px';
-startGameBtn.style.fontSize = '16px';
+startGameBtn.classList.add('icon', 'start-game-button');
 document.body.appendChild(startGameBtn);
 
 startGameBtn.addEventListener('click', () => {
@@ -390,3 +412,13 @@ timerPopover.innerHTML = `
 `;
 document.body.appendChild(timerPopover);
 
+// Create audio play button
+const playbutton = document.createElement('div');
+playbutton.innerHTML = '&#9654;'; // Unicode play icon
+playbutton.classList.add('icon', 'play-button');
+document.body.appendChild(playbutton);
+playbutton.addEventListener('click', () => {
+    const audio = document.getElementById('videogame');
+    audio.play();
+}
+);

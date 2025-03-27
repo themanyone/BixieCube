@@ -109,6 +109,7 @@ function rotateFace(face, angle, layersCount = 1) {
                     console.log("Cube solved!");
                     celebrateWin(); // <-- Trigger the celebration.
                     stopGame();
+                    startGameBtn.textContent = 'Start Game';
                     return;
                 }
                 moveHistory.push({ face, angle, layersCount });
@@ -124,7 +125,7 @@ function rotateFace(face, angle, layersCount = 1) {
                 // End the undo chain only when no more undo moves are queued.
                 isUndoing = false;
             }
-            currentLayers = 1;
+            // currentLayers = 1; Reset the layer mode after each move.
         }
     }
     requestAnimationFrame(animateRotation);
@@ -164,7 +165,7 @@ function checkCubeSolved() {
 // Key event handler for hotkeys
 window.addEventListener('keydown', e => {
     // If a number key 2-9 is pressed, set the layer mode.
-    if (e.key >= '2' && e.key <= '9') {
+    if (e.key >= '1' && e.key <= '9') {
         const n = parseInt(e.key, 10);
         currentLayers = Math.max(1, Math.min(n, Math.floor(numPerAxis / 2)));
         console.log('Rotate layers mode set to:', currentLayers);

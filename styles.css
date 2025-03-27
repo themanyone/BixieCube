@@ -72,6 +72,32 @@ body {
     right: 60px;
 }
 
+.play-button {
+    background-color: #ce496b;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: fixed;
+    z-index: 1000;
+    bottom: 20px;
+    left: 20px;
+}
+
+.start-game-button {
+    background-color: #ce496b;
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: absolute;
+    z-index: 1000;
+    bottom: 20px;
+    right: 20px;
+}
+
 .pyro {
     display: none;
 }
