@@ -7,7 +7,7 @@ const rotationQueue = [];
 let undoQueue = [];  // <-- new undo queue
 let moveHistory = [];
 let isUndoing = false;
-let currentLayers = 1;
+let turningLayers = 1;
 const eps = 0.001;
 
 function rotateFace(face, angle, layersCount = 1) {
@@ -125,7 +125,7 @@ function rotateFace(face, angle, layersCount = 1) {
                 // End the undo chain only when no more undo moves are queued.
                 isUndoing = false;
             }
-            // currentLayers = 1; Reset the layer mode after each move.
+            // turningLayers = 1; Reset the layer mode after each move.
         }
     }
     requestAnimationFrame(animateRotation);
@@ -167,8 +167,8 @@ window.addEventListener('keydown', e => {
     // If a number key 2-9 is pressed, set the layer mode.
     if (e.key >= '1' && e.key <= '9') {
         const n = parseInt(e.key, 10);
-        currentLayers = Math.max(1, Math.min(n, Math.floor(numPerAxis / 2)));
-        console.log('Rotate layers mode set to:', currentLayers);
+        turningLayers = Math.max(1, Math.min(n, Math.floor(numPerAxis / 2)));
+        console.log('Rotate layers mode set to:', turningLayers);
         return;
     }
     // Hotkey for undo (last move)
@@ -189,18 +189,18 @@ window.addEventListener('keydown', e => {
     // Process face rotation keys.
     let angle;
     switch (e.key) {
-        case 'a': angle = Math.PI / 2; rotateFace('front', angle, currentLayers); break;
-        case 'A': angle = -Math.PI / 2; rotateFace('front', angle, currentLayers); break;
-        case 'b': angle = Math.PI / 2; rotateFace('back', angle, currentLayers); break;
-        case 'B': angle = -Math.PI / 2; rotateFace('back', angle, currentLayers); break;
-        case 'c': angle = Math.PI / 2; rotateFace('left', angle, currentLayers); break;
-        case 'C': angle = -Math.PI / 2; rotateFace('left', angle, currentLayers); break;
-        case 'd': angle = Math.PI / 2; rotateFace('right', angle, currentLayers); break;
-        case 'D': angle = -Math.PI / 2; rotateFace('right', angle, currentLayers); break;
-        case 'e': angle = Math.PI / 2; rotateFace('top', angle, currentLayers); break;
-        case 'E': angle = -Math.PI / 2; rotateFace('top', angle, currentLayers); break;
-        case 'f': angle = Math.PI / 2; rotateFace('bottom', angle, currentLayers); break;
-        case 'F': angle = -Math.PI / 2; rotateFace('bottom', angle, currentLayers); break;
+        case 'a': angle = Math.PI / 2; rotateFace('front', angle, turningLayers); break;
+        case 'A': angle = -Math.PI / 2; rotateFace('front', angle, turningLayers); break;
+        case 'b': angle = Math.PI / 2; rotateFace('back', angle, turningLayers); break;
+        case 'B': angle = -Math.PI / 2; rotateFace('back', angle, turningLayers); break;
+        case 'c': angle = Math.PI / 2; rotateFace('left', angle, turningLayers); break;
+        case 'C': angle = -Math.PI / 2; rotateFace('left', angle, turningLayers); break;
+        case 'd': angle = Math.PI / 2; rotateFace('right', angle, turningLayers); break;
+        case 'D': angle = -Math.PI / 2; rotateFace('right', angle, turningLayers); break;
+        case 'e': angle = Math.PI / 2; rotateFace('top', angle, turningLayers); break;
+        case 'E': angle = -Math.PI / 2; rotateFace('top', angle, turningLayers); break;
+        case 'f': angle = Math.PI / 2; rotateFace('bottom', angle, turningLayers); break;
+        case 'F': angle = -Math.PI / 2; rotateFace('bottom', angle, turningLayers); break;
         default: break;
     }
 });
@@ -304,7 +304,7 @@ renderer.domElement.addEventListener('mouseup', (event) => {
             if (selectedFace === 'bottom' || selectedFace === 'left' || selectedFace === 'back') {
                 angle = -angle;
             }
-            rotateFace(selectedFace, angle, currentLayers);
+            rotateFace(selectedFace, angle, turningLayers);
         }
     }
     // Reset state and re-enable OrbitControls.
@@ -516,6 +516,7 @@ function stopGame() {
 document.getElementById('numPerAxisInput').addEventListener('change', (event) => {
     stopGame();
     timerPopover.style.display = 'none';
+    turningLayers = 1;
     // timerPopover.textContent = '00:00';
     startGameBtn.textContent = 'Start Game';
 });
