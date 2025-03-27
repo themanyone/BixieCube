@@ -370,6 +370,12 @@ startGameBtn.style.padding = '10px 20px';
 startGameBtn.style.fontSize = '16px';
 document.body.appendChild(startGameBtn);
 
+startGameBtn.addEventListener('click', () => {
+    if (startGameBtn.textContent !== 'Start Game') {
+        buildCube();
+    }
+});
+
 // Create clock timer popover
 const timerPopover = document.createElement('div');
 timerPopover.id = 'timerPopover';

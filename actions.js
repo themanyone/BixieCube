@@ -542,5 +542,5 @@ function celebrateWin() {
     setTimeout(function(){
         pyro.style.display = "none";
         wt.style.display = "none";
-    }, 5000);
+    }, 8000);
 }

@@ -30,8 +30,13 @@ body {
 }
 .overlay h1 {
     color: #ce496b;
-    font-size: 2rem;
     margin-bottom: 1rem;
+}
+#title {
+    position: absolute;
+    top: 10px;
+    color: #ce496b;
+    font-size: 2rem;
 }
 .popover {
     position: fixed;

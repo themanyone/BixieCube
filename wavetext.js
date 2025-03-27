@@ -12,4 +12,4 @@ window.setTimeout(function(){
         wt.innerHTML+="<span>"+i.replace(/ /g,"&nbsp;")+"</span>";
     });
 }
-, 20000);
+, 15000);
