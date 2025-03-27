@@ -105,7 +105,7 @@ function rotateFace(face, angle, layersCount = 1) {
             isRotating = false;
 
             if (!isUndoing) {
-                if (checkCubeSolved()) {
+                if (checkCubeSolved() && startGameBtn.textContent != 'Start Game') {
                     console.log("Cube solved!");
                     celebrateWin(); // <-- Trigger the celebration.
                     stopGame();
