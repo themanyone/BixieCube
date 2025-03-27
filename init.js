@@ -292,8 +292,6 @@ configPopover.innerHTML = `
     <p><strong>Alpha:</strong> <input type="range" id="alphaInput" min="0" max="1" step="0.01" value="1" /></p>
     <p><strong>2x2</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /><strong>9x9</strong></p>
     <p><button id="resetCube">Reset Cube</button></p>
-    <hr>
-    <p>Add more options here.</p>
 `;
 document.body.appendChild(configPopover);
 
