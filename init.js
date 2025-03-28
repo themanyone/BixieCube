@@ -234,7 +234,9 @@ popover.classList.add('popover');
 popover.style.top = '60px';
 popover.style.left = '20px';
 popover.style.display = 'none';  // <-- Initialize as hidden
-popover.innerHTML = `<h2>Contact</h2>
+popover.innerHTML = `<h2>Upgrade to Premium Access</h2>
+
+<p>Unlock exclusive features and support the development of BixieCube by becoming a Premium Member.</p>
 
 <ul>
 <li>BixieCube <a href="https://github.com/themanyone/BixieCube"><span>project on GitHub</span></a></li>
@@ -244,6 +246,9 @@ popover.innerHTML = `<h2>Contact</h2>
 <li>Buy me a coffee <a href="https://buymeacoffee.com/isreality"><span>https://buymeacoffee.com/isreality</span></a></li>
 <li><a href="http://thenerdshow.com/" target="_blank">TheNerdShow.com</a></li>
 </ul>
+
+<h2>Try <a href="../cube.html">BixieCube Classic</a></h2>
+<h3>Fewer features, but faster loading.</h3>
 
 <h2>LICENSE</h2>
 
@@ -260,8 +265,8 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
+You may obtain a complete copy of the GNU General Public License along
+with this <a href="https://github.com/themanyone/BixieCube"><span>project on GitHub</span></a>, or write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 </code></pre>
 `;
@@ -291,6 +296,7 @@ configPopover.innerHTML = `
     <p><strong>Bevel:</strong> <input type="range" id="bevelInput" min="0.0" max="0.5" step="0.05" value="${bevel}" /></p>
     <p><strong>Alpha:</strong> <input type="range" id="alphaInput" min="0" max="1" step="0.01" value="1" /></p>
     <p><strong>2x2</strong> <input id="numPerAxisInput" type="range" min="2" max="9" step="1" value="${numPerAxis}" /><strong>9x9</strong></p>
+    <p><strong>Easy</strong> <input id="difficulty" type="range" min="5" max="15" step="1" value="5" /><strong>Hard</strong></p>
     <p><button id="resetCube">Reset Cube</button></p>
 `;
 document.body.appendChild(configPopover);
@@ -317,13 +323,12 @@ helpPopover.innerHTML = `
     <p>Right-click: Pan the camera</p>
     <p>Click or drag to rotate scene</p>
     <p>Scroll to zoom in/out</p>
-    <p>Click the hamburger icon to show/hide this popover.</p>
     <p>Click anywhere outside the popover to close it.</p>
     <hr>
     <h3>Keyboard Help</h3>
     <p>abcdf - Rotate face clockwise</p>
     <p>ABCDF - Rotate face counterclockwise</p>
-    <p>2a 3b - Rotate face + layers</p>
+    <p>1-9   - Layers to rotate</p>
     <p>z - undo last move</p>
     <p>r - redo last move</p>
     <p>Space - Shuffle cube</p>

@@ -9,6 +9,7 @@ let moveHistory = [];
 let isUndoing = false;
 let turningLayers = 1;
 const eps = 0.001;
+let difficulty = 5;
 
 function rotateFace(face, angle, layersCount = 1) {
     // Play twist_sound.
@@ -457,7 +458,7 @@ export function scrambleCube() {
     for (let i = 0; i < 3; i++) {
         const randomFace = faces[Math.floor(Math.random() * faces.length)];
         const randomAngle = Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2;
-        rotateFace(randomFace, randomAngle, 1);
+        rotateFace(randomFace, randomAngle, Math.random() * numPerAxis / 2);
     }
 }
 
@@ -510,13 +511,13 @@ function stopGame() {
         moveHistory.length = 0;
         isRotating = false;
         isUndoing = false;
+        turningLayers = 1; // Turn one layer by default
     }
 }
 
 document.getElementById('numPerAxisInput').addEventListener('change', (event) => {
     stopGame();
     timerPopover.style.display = 'none';
-    turningLayers = 1;
     // timerPopover.textContent = '00:00';
     startGameBtn.textContent = 'Start Game';
 });
@@ -543,3 +544,13 @@ function celebrateWin() {
         wt.style.display = "none";
     }, 8000);
 }
+
+// Respond to difficulty slider event
+difficultySlider.addEventListener('input', () => {
+    //  Get the current difficulty value.
+    difficulty = difficultySlider.value;
+  
+    //  Do something with the difficulty value (e.g., update the game logic).
+    //  This is a placeholder; replace with your actual game logic.
+    console.log("Difficulty changed to:", difficulty); 
+  });
