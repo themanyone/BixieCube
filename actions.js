@@ -455,10 +455,10 @@ function paintBody(imageUrl) {
 
 export function scrambleCube() {
     const faces = ['front', 'back', 'left', 'right', 'top', 'bottom'];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < difficulty; i++) {
         const randomFace = faces[Math.floor(Math.random() * faces.length)];
         const randomAngle = Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2;
-        rotateFace(randomFace, randomAngle, Math.random() * numPerAxis / 2);
+        rotateFace(randomFace, randomAngle, Math.random() * Math.floor(numPerAxis / 2) + 1);
     }
 }
 
@@ -546,9 +546,9 @@ function celebrateWin() {
 }
 
 // Respond to difficulty slider event
-difficultySlider.addEventListener('input', () => {
+document.getElementById('difficulty').addEventListener('input', (e) => {
     //  Get the current difficulty value.
-    difficulty = difficultySlider.value;
+    difficulty = e.target.value;
   
     //  Do something with the difficulty value (e.g., update the game logic).
     //  This is a placeholder; replace with your actual game logic.
