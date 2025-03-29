@@ -1,6 +1,6 @@
-import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
-import { RoundedBoxGeometry } from 'https://unpkg.com/three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'orbit';
+import { RoundedBoxGeometry } from 'addons/geometries/RoundedBoxGeometry.js';
 
 // Create a canvas texture for a colored face with a letter label
 function createFaceTexture(color, letter) {

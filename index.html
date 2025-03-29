@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8">    <title>BixieCube</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BixieCube</title>
     <meta name="description" content="3D game using Three.js">
     <meta name="keywords" content="Three.js, 3D, game, cube, BixieCube">
-    <meta name="author" content="BixieCube">
+    <meta name="author" content="Henry Kroll III">
     <meta name="robots" content="index, follow">
     <meta name="revisit-after" content="3 days">
     <meta name="language" content="English">
@@ -18,9 +18,9 @@
     <link rel="stylesheet" href="styles.css?v=1.1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="apple-touch-icon" href="images/cube.gif"/>
 
@@ -51,7 +51,9 @@
     <script type="importmap">
     {
         "imports": {
-            "three": "https://unpkg.com/three/build/three.module.js"
+            "three": "/3js/build/three.module.min.js",
+            "orbit": "/3js/examples/jsm/controls/OrbitControls.js",
+            "addons/": "/3js/examples/jsm/"
         }
     }
     </script>

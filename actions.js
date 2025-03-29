@@ -1,4 +1,4 @@
-import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+import * as THREE from 'three';
 import { scene, camera, renderer, controls, bixieCube, cubieSize, gap, numPerAxis, getOffset } from './init.js';
 
 // Global flags, history, and queues for rotations.
