@@ -212,7 +212,7 @@ function updateCubeAlpha(newAlpha) {
 buildCube();
 
 // Position camera so the whole cube is visible.
-camera.position.z = 2 + numPerAxis;
+camera.position.z = 5 + numPerAxis;
 
 // Animation loop to render the scene continuously.
 function animate() {
@@ -402,18 +402,13 @@ startGameBtn.addEventListener('click', () => {
 });
 
 // Create clock timer popover
-const timerPopover = document.createElement('div');
-timerPopover.id = 'timerPopover';
-timerPopover.classList.add('overlay');
+const timerBox = document.createElement('div');
+timerBox.id = 'timerBox';
 startGameBtn.style.display = 'block';
-timerPopover.style.position = 'fixed';
-timerPopover.style.bottom = '0';
-timerPopover.style.left = '50%';
-timerPopover.style.transform = 'translateX(-50%)';
-timerPopover.innerHTML = `
+timerBox.innerHTML = `
     <h1 id="timerDisplay">01:00</h1>
 `;
-document.body.appendChild(timerPopover);
+document.body.appendChild(timerBox);
 
 // Create audio play button
 const playbutton = document.createElement('div');
@@ -429,12 +424,12 @@ playbutton.addEventListener('click', () => {
 // Create number input for turningLayers
 const turnBox = document.createElement('div');
 turnBox.id = 'turnBox';
-turnBox.innerHTML = `Turning
+turnBox.innerHTML = `Layers:
     <input type="text" id="number" value="1">
     <span class="spinner">
         <button id="increment">▲</button>
         <button id="decrement">▼</button>
-    </span>layer<span id="s">&nbsp;</span> at a time.
+    </span>
 `;
 document.body.appendChild(turnBox);
 
@@ -444,7 +439,6 @@ document.getElementById('increment').addEventListener('click',
         const val = parseInt(input.value);
         if (val < 9){
             input.value = val + 1;
-            document.getElementById('s').innerHTML = 's&nbsp;';
         }
     });
 document.getElementById('decrement').addEventListener('click', 
@@ -454,6 +448,4 @@ document.getElementById('decrement').addEventListener('click',
         if (val > 1){
             input.value = val - 1;
         }
-        if (val === 2)
-            document.getElementById('s').innerHTML = '&nbsp;';
     });

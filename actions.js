@@ -20,7 +20,11 @@ function rotateFace(face, angle, layersCount = 1, sound = true) {
     // Play twist_sound.
     if (sound) {
         const audio = document.getElementById('twist_sound');
-        audio.play();
+        try {
+            audio.play();
+        } catch (error) {
+            // console.error('Error playing audio:', error);
+        }
     }
     const rotatingCubies = [];
     let boundary;
@@ -135,7 +139,7 @@ function rotateFace(face, angle, layersCount = 1, sound = true) {
                 // End the undo chain only when no more undo moves are queued.
                 isUndoing = false;
             }
-            // turningLayers = 1; Reset the layer mode after each move.
+            // turningLayers = 1; 
         }
     }
     requestAnimationFrame(animateRotation);
@@ -180,10 +184,6 @@ window.addEventListener('keydown', e => {
         turningLayers = Math.max(1, Math.min(n, Math.floor(numPerAxis / 2)));
         console.log('Rotate layers set to:', turningLayers);
         document.getElementById("number").value = turningLayers;
-        if (n === 1)
-            document.getElementById('s').innerHTML = '&nbsp;';
-        else
-            document.getElementById('s').innerHTML = 's&nbsp;';
         return;
     }
     // Hotkey for undo (last move)
@@ -315,7 +315,7 @@ function turnDirection(start, end){
     const dy = end.y - start.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     // Only proceed if the drag is significant.
-    if (distance > 5) {
+    if (distance > 20) {
         // Compute vectors from the face center (screen coords) to the drag start and end.
         const v1 = { x: start.x - faceCenterScreen.x, y: start.y - faceCenterScreen.y };
         const v2 = { x: end.x - faceCenterScreen.x,   y: end.y - faceCenterScreen.y };
@@ -537,7 +537,7 @@ let timerInterval = null;
 
 // Start game button click starts timer and shows popover
 startGameBtn.addEventListener('click', (e) => {
-    timerPopover.style.display = 'block';
+    timerBox.style.display = 'block';
     if (e.target.textContent === 'Reset') {
         e.target.textContent = 'Start Game';
         stopGame();
@@ -547,13 +547,14 @@ startGameBtn.addEventListener('click', (e) => {
         }
         return;
     }
+    resetCube.click();
     e.target.textContent = 'Reset';
     scrambleCube();
     setTimeout(() => {
         moveHistory.length = 0; // <-- Reset the undo queue when starting a new game.
     }, 2000);
     let gameTime = 0;
-    timerPopover.style.display = 'block';
+    timerBox.style.display = 'block';
     document.getElementById('timerDisplay').textContent = formatTime(gameTime);
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
@@ -564,7 +565,7 @@ startGameBtn.addEventListener('click', (e) => {
 
 // Hide timer popover (and stop timer) when game is over
 function stopGame() {
-    // timerPopover.style.display = 'none';
+    // timerBox.style.display = 'none';
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -574,21 +575,27 @@ function stopGame() {
         moveHistory.length = 0;
         isRotating = false;
         isUndoing = false;
+        dragStart = null;
+        selectedFace = null;
+        dragDirection = 0;
+        controls.enabled = true;
         turningLayers = 1; // Turn one layer by default
+        document.getElementById('number').value = 1;
+        // resetCube.click();
     }
 }
 
 document.getElementById('numPerAxisInput').addEventListener('change', (event) => {
     stopGame();
-    timerPopover.style.display = 'none';
-    // timerPopover.textContent = '00:00';
+    timerBox.style.display = 'none';
+    // timerBox.textContent = '00:00';
     startGameBtn.textContent = 'Start Game';
 });
 
 document.getElementById('resetCube').addEventListener('click', () => {
     stopGame();
-    timerPopover.style.display = 'none';
-    // timerPopover.textContent = '00:00';
+    // timerBox.style.display = 'none';
+    // timerBox.textContent = '00:00';
     startGameBtn.textContent = 'Start Game';
 });
 
@@ -605,6 +612,7 @@ function celebrateWin() {
     setTimeout(function(){
         pyro.style.display = "none";
         wt.style.display = "none";
+        resetCube.click();
     }, 8000);
 }
 

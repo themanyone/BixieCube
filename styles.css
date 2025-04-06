@@ -29,9 +29,10 @@ body {
     display: none;
     z-index: 1000;
 }
-.overlay h1 {
+#timerBox {
     color: #ce496b;
-    margin-bottom: 1rem;
+    position: absolute;
+    bottom: 50px;
 }
 #title {
     position: absolute;
