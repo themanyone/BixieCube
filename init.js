@@ -425,3 +425,35 @@ playbutton.addEventListener('click', () => {
     audio.play();
 }
 );
+
+// Create number input for turningLayers
+const turnBox = document.createElement('div');
+turnBox.id = 'turnBox';
+turnBox.innerHTML = `Turning
+    <input type="text" id="number" value="1">
+    <span class="spinner">
+        <button id="increment">▲</button>
+        <button id="decrement">▼</button>
+    </span>layer<span id="s">&nbsp;</span> at a time.
+`;
+document.body.appendChild(turnBox);
+
+document.getElementById('increment').addEventListener('click', 
+    (e)=>{
+        const input = document.getElementById('number');
+        const val = parseInt(input.value);
+        if (val < 9){
+            input.value = val + 1;
+            document.getElementById('s').innerHTML = 's&nbsp;';
+        }
+    });
+document.getElementById('decrement').addEventListener('click', 
+    (e)=>{
+        const input = document.getElementById('number');
+        const val = parseInt(input.value);
+        if (val > 1){
+            input.value = val - 1;
+        }
+        if (val === 2)
+            document.getElementById('s').innerHTML = '&nbsp;';
+    });

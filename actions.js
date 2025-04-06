@@ -11,15 +11,17 @@ let turningLayers = 1;
 const eps = 0.001;
 let difficulty = 5;
 
-function rotateFace(face, angle, layersCount = 1) {
-    // Play twist_sound.
-    const audio = document.getElementById('twist_sound');
-    audio.play();
+function rotateFace(face, angle, layersCount = 1, sound = true) {
     if (isRotating) {
         rotationQueue.push({ face, angle, layersCount });
         return;
     }
     isRotating = true;
+    // Play twist_sound.
+    if (sound) {
+        const audio = document.getElementById('twist_sound');
+        audio.play();
+    }
     const rotatingCubies = [];
     let boundary;
     switch (face) {
@@ -104,7 +106,7 @@ function rotateFace(face, angle, layersCount = 1) {
             });
             scene.remove(tempGroup);
             isRotating = false;
-
+            
             if (!isUndoing) {
                 if (checkCubeSolved() && startGameBtn.textContent != 'Start Game') {
                     console.log("Cube solved!");
@@ -113,7 +115,14 @@ function rotateFace(face, angle, layersCount = 1) {
                     startGameBtn.textContent = 'Start Game';
                     return;
                 }
-                moveHistory.push({ face, angle, layersCount });
+                // if finalizing a twist, store the whole move
+                if (Math.abs(angle) === twist * 3) {
+                    angle = twist * 4 * Math.sign(angle);
+                }
+                // but don't store preview twists
+                if (Math.abs(angle) !== twist) {
+                    moveHistory.push({ face, angle, layersCount });
+                }
             }
 
             if (undoQueue.length > 0) {
@@ -169,7 +178,12 @@ window.addEventListener('keydown', e => {
     if (e.key >= '1' && e.key <= '9') {
         const n = parseInt(e.key, 10);
         turningLayers = Math.max(1, Math.min(n, Math.floor(numPerAxis / 2)));
-        console.log('Rotate layers mode set to:', turningLayers);
+        console.log('Rotate layers set to:', turningLayers);
+        document.getElementById("number").value = turningLayers;
+        if (n === 1)
+            document.getElementById('s').innerHTML = '&nbsp;';
+        else
+            document.getElementById('s').innerHTML = 's&nbsp;';
         return;
     }
     // Hotkey for undo (last move)
@@ -207,12 +221,15 @@ window.addEventListener('keydown', e => {
 });
 
 // Global variables for face dragging.
-let isFaceDragging = false;
 let dragStart = null;
 let currentFace = null;
 let dragCubie = null;
 let faceCenterScreen = null;
 const raycaster = new THREE.Raycaster();
+// Face dragging handles
+let selectedFace = null;
+let dragDirection = 0;
+const twist = Math.PI / 8;
 
 function projectToScreen(pos3D) {
     const pos = pos3D.clone().project(camera);
@@ -221,9 +238,6 @@ function projectToScreen(pos3D) {
         y: (-pos.y + 1) / 2 * renderer.domElement.clientHeight
     };
 }
-
-// Face dragging handles
-let selectedFace = null;
 
 function getFaceCandidates(intersection, box) {
     const diffRight  = Math.abs(intersection.point.x - box.max.x);
@@ -264,11 +278,15 @@ function computeFaceCenterScreen(box, face, camera, renderer) {
         y: (-pos.y + 1) / 2 * renderer.domElement.clientHeight
     };
 }
-
-renderer.domElement.addEventListener('mousedown', (event) => {
+   
+function pressDown(event) {
+    event.preventDefault();
+    if (event.changedTouches){
+        event = event.changedTouches[0];
+    }
     const mouse = new THREE.Vector2(
-        (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
-        -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
+    (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
+    -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
     );
     raycaster.setFromCamera(mouse, camera);
     // Intersect with the cube's children to get a hit point on the cube.
@@ -286,25 +304,39 @@ renderer.domElement.addEventListener('mousedown', (event) => {
         dragStart = { x: event.clientX, y: event.clientY };
         controls.enabled = false;
     }
-});
+}
+renderer.domElement.addEventListener('mousedown', pressDown);
+renderer.domElement.addEventListener('touchstart', pressDown);
 
-renderer.domElement.addEventListener('mouseup', (event) => {
+
+
+function turnDirection(start, end){
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    // Only proceed if the drag is significant.
+    if (distance > 5) {
+        // Compute vectors from the face center (screen coords) to the drag start and end.
+        const v1 = { x: start.x - faceCenterScreen.x, y: start.y - faceCenterScreen.y };
+        const v2 = { x: end.x - faceCenterScreen.x,   y: end.y - faceCenterScreen.y };
+        // use z-component of the cross product to get direction.
+        const cross = v1.x * v2.y - v1.y * v2.x;
+        let angle = cross > 0 ? -1: 1;
+        if (selectedFace === 'bottom' || selectedFace === 'left' || selectedFace === 'back') {
+            angle = -angle;
+        }
+        return angle;
+    }
+    return null;
+}
+function release(event) {
+    if (event.changedTouches){
+        event = event.changedTouches[0];
+    }
     if (selectedFace && faceCenterScreen && dragStart) {
         const dragEnd = { x: event.clientX, y: event.clientY };
-        const dx = dragEnd.x - dragStart.x;
-        const dy = dragEnd.y - dragStart.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        // Only proceed if the drag is significant.
-        if (distance > 5) {
-            // Compute vectors from the face center (screen coords) to the drag start and end.
-            const v1 = { x: dragStart.x - faceCenterScreen.x, y: dragStart.y - faceCenterScreen.y };
-            const v2 = { x: dragEnd.x - faceCenterScreen.x,   y: dragEnd.y - faceCenterScreen.y };
-            // Use the z-component of the cross product to decide rotation direction.
-            const cross = v1.x * v2.y - v1.y * v2.x;
-            let angle = cross > 0 ? -Math.PI / 2 : Math.PI / 2;
-            if (selectedFace === 'bottom' || selectedFace === 'left' || selectedFace === 'back') {
-                angle = -angle;
-            }
+        const angle = 3 * twist * dragDirection;
+        if (angle) {
             rotateFace(selectedFace, angle, turningLayers);
         }
     }
@@ -312,8 +344,39 @@ renderer.domElement.addEventListener('mouseup', (event) => {
     selectedFace = null;
     faceCenterScreen = null;
     dragStart = null;
+    dragDirection = 0;
     controls.enabled = true;
-});
+}
+
+renderer.domElement.addEventListener('mouseup', release);
+renderer.domElement.addEventListener('touchend', release);
+// renderer.domElement.addEventListener('mouseleave', release);
+// renderer.domElement.addEventListener('touchcancel', release);
+
+function dragFace(event){
+    if (isRotating || !dragStart) return;
+    if (event.changedTouches){
+        event = event.changedTouches[0];
+    }
+    if (selectedFace && faceCenterScreen) {
+        const dragCurrent = { x: event.clientX, y: event.clientY };
+        let direction = turnDirection(dragStart, dragCurrent, false);
+        if (direction === dragDirection) return; // ignore subsequent dragging
+        // dragDirection has changed, so we restore face rotation
+        if (dragDirection) {
+            rotateFace(selectedFace, (-twist) * dragDirection, turningLayers, false);
+            dragDirection = 0;
+            return;
+        }
+        if (direction) {
+            dragDirection = direction;
+            rotateFace(selectedFace, twist * dragDirection, turningLayers, false);
+        }
+    }
+}
+// Provide visual feedback with a small twist in dragDirection
+renderer.domElement.addEventListener('mousemove', dragFace);
+renderer.domElement.addEventListener('touchmove', dragFace);
 
 // Add drop event handlers and helper function to paint a face with a dropped image
 
@@ -554,3 +617,20 @@ document.getElementById('difficulty').addEventListener('input', (e) => {
     //  This is a placeholder; replace with your actual game logic.
     console.log("Difficulty changed to:", difficulty); 
   });
+
+
+
+document.getElementById('increment').addEventListener('click', 
+    (e)=>{
+        const input = document.getElementById('number');
+        const val = parseInt(input.value);
+        turningLayers = val;        
+        turningLayers = Math.max(1, Math.min(val, Math.floor(numPerAxis / 2)));
+        input.value = turningLayers;
+    });
+document.getElementById('decrement').addEventListener('click', 
+    (e)=>{
+        const input = document.getElementById('number');
+        const val = parseInt(input.value);
+        turningLayers = val;
+    });

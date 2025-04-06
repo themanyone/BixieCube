@@ -1,3 +1,4 @@
+@import url("number.css");
 body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
@@ -84,6 +85,7 @@ body {
     bottom: 20px;
     left: 20px;
 }
+
 
 .start-game-button {
     background-color: #ce496b;
