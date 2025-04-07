@@ -202,7 +202,7 @@ function findFace(direction = 't') {
 
     // 3. Find the face closest to direction.
     let bestFace = null;
-    let bestValue = direction === 'b' ? -Infinity : Infinity; // Initialize for bottommost or topmost
+    let bestValue = "bd".includes(direction) ? -Infinity : Infinity; // Initialize for bottommost or topmost
     if (direction === 'r') {
         bestValue = -Infinity;
     }
@@ -229,6 +229,7 @@ function findFace(direction = 't') {
                 }
                 break;
             case 'b':
+            case 'd':
                 currentValue = screenPositions[face].y;
                 if (currentValue > bestValue) {
                     bestValue = currentValue;
@@ -291,12 +292,12 @@ window.addEventListener('keydown', e => {
         return;
     }
     // Process face rotation "fublr" keys.
-    let angle= Math.PI / 2;
+    let angle = -Math.PI / 2;
     const theKey = e.key.toLowerCase();
-    if ("futblrk".includes(theKey)){        
+    if ("dfutblrk".includes(theKey)){        
         const face = findFace(theKey);
         if (['front', 'top', 'right'].includes(face)) angle = -angle;
-        if ("FUTBLRK".includes(e.key)) {
+        if ("DFUTBLRK".includes(e.key)) {
             angle = -angle;
         }
         rotateFace(face, angle, turningLayers);

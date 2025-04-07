@@ -46,7 +46,7 @@ controls.rotateSpeed = 0.7;    // reduced rotation speed for a more controlled f
 
 // Add an emissive material to make the cube glow from within
 const defaultMaterial = new THREE.MeshStandardMaterial({
-    emissive: 0xcccccc, // White glow
+    emissive: 0x222222, // White glow
     emissiveIntensity: 0.01, // Adjust intensity as needed
     color: 0x000000 // Base color
 });
@@ -287,7 +287,6 @@ document.body.appendChild(configPopover);
 // Create help icon element
 const helpIcon = document.createElement('div');
 helpIcon.innerHTML = '&#x2753;'; // Unicode for a question mark help icon
-helpIcon.style.fontSize = '25px'; // Reduce the font size of the help icon
 helpIcon.classList.add('icon', 'help-icon');
 document.body.appendChild(helpIcon);
 
@@ -309,13 +308,13 @@ helpPopover.innerHTML = `
     <p>Click anywhere outside the popover to close it.</p>
     <hr>
     <h3>Keyboard Help</h3>
-    <p>f - Rotate (f)ront face clockwise</p>
-    <p>t - Rotate (t)op face clockwise</p>
-    <p>r - Rotate (r)ight face clockwise</p>
-    <p>b - Rotate (b)ottom face clockwise</p>
-    <p>l - Rotate (l)eft face clockwise</p>
-    <p>k - Rotate bac(k) face clockwise</p>
-    <p>FTRBLK - Rotate faces counterclockwise</p>
+    <p>f - Rotate (f)ront face counter-clockwise</p>
+    <p>u - Rotate (u)pper face counter-clockwise</p>
+    <p>r - Rotate (r)ight face counter-clockwise</p>
+    <p>d - Rotate (d)own face counter-clockwise</p>
+    <p>l - Rotate (l)eft face counter-clockwise</p>
+    <p>k - Rotate bac(k) face counter-clockwise</p>
+    <p>FURDLK - Rotate faces clockwise</p>
     <p>1-9   - Layers to rotate</p>
     <p>z - undo last move</p>
     <p>r - redo last move</p>
@@ -323,6 +322,47 @@ helpPopover.innerHTML = `
     <p>Enter - Solve cube</p>
 `;
 document.body.appendChild(helpPopover);
+
+// Create a circle with a line through it element
+const cheatIcon = document.createElement('div');
+cheatIcon.innerHTML = "&#128369;";
+cheatIcon.classList.add('icon', 'cheat-icon');
+document.body.appendChild(cheatIcon);
+
+// Create cheat popover element
+const cheatPopover = document.createElement('pre');
+cheatPopover.classList.add('popover');
+cheatPopover.style.top = '60px';
+cheatPopover.style.left = '20px'; // Position it next to the gear icon
+cheatPopover.style.display = 'none';  // Initialize as hidden
+cheatPopover.innerHTML = `
+countercounter-clockwise: f = front,
+u = up, l = left, r = right
+    clockwise: shift key
+
+    flip mid         f U l u
+
+    flip corner      r d R D
+
+    rot mid left     u l U L U F u f
+
+    rot mid right:   U R u r u f U F
+
+    "L" upper-left:  F R U r u f
+
+    cross up right:  R U r U R U U r
+
+    solve corners:   U R u l U r u L
+
+    rotate top face counterclockwise
+    left clockwise:  v h V U v H V u`;
+document.body.appendChild(cheatPopover);
+
+// Toggle cheat popover on click
+cheatIcon.addEventListener('click', () => {
+    cheatPopover.style.display = (cheatPopover.style.display === 'none') ? 'block' : 'none';
+});
+
 
 // Toggle help popover on help icon click
 helpIcon.addEventListener('click', () => {

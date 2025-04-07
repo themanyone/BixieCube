@@ -58,7 +58,7 @@ body {
     font-size: 30px;
     cursor: pointer;
     z-index: 1000;
-    color: white;
+    color: #ce496b;
 }
 
 .hamburger-icon {
@@ -74,6 +74,11 @@ body {
 .help-icon {
     top: 25px;
     right: 60px;
+}
+
+.cheat-icon {
+    top: 25px;
+    left: 60px;
 }
 
 .play-button {
