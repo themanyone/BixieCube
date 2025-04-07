@@ -458,6 +458,14 @@ playbutton.addEventListener('click', () => {
     isPlaying = !isPlaying;
 });
 
+// Create undo button
+const undoButton = document.createElement('div');
+undoButton.textContent = 'Undo';
+undoButton.id = 'undoButton';
+undoButton.innerHTML = "&#129192;"; // Unicode undo icon
+undoButton.classList.add('icon', 'undo-button');
+document.body.appendChild(undoButton);
+
 // Create number input for turningLayers
 const turnBox = document.createElement('div');
 turnBox.id = 'turnBox';

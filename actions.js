@@ -266,6 +266,19 @@ function findFace(direction = 't') {
     return bestFace;
 }
 
+function undo() {
+    if (moveHistory.length > 0) {
+        const lastMove = moveHistory.pop();
+        const undoMove = { face: lastMove.face, angle: -lastMove.angle, layersCount: lastMove.layersCount };
+        // If rotation is underway or queued then push it to the undo queue.
+        if (isRotating || rotationQueue.length > 0 || undoQueue.length > 0) {
+            undoQueue.push(undoMove);
+        } else {
+            isUndoing = true;
+            rotateFace(undoMove.face, undoMove.angle, undoMove.layersCount);
+        }
+    }
+}
 // Key event handler for hotkeys
 window.addEventListener('keydown', e => {
     // If a number key 2-9 is pressed, set the layer mode.
@@ -278,17 +291,7 @@ window.addEventListener('keydown', e => {
     }
     // Hotkey for undo (last move)
     if (e.key === 'z') {
-        if (moveHistory.length > 0) {
-            const lastMove = moveHistory.pop();
-            const undoMove = { face: lastMove.face, angle: -lastMove.angle, layersCount: lastMove.layersCount };
-            // If rotation is underway or queued then push it to the undo queue.
-            if (isRotating || rotationQueue.length > 0 || undoQueue.length > 0) {
-                undoQueue.push(undoMove);
-            } else {
-                isUndoing = true;
-                rotateFace(undoMove.face, undoMove.angle, undoMove.layersCount);
-            }
-        }
+        undo();
         return;
     }
     // Process face rotation "fublr" keys.
@@ -303,6 +306,12 @@ window.addEventListener('keydown', e => {
         rotateFace(face, angle, turningLayers);
     }
 });
+
+
+document.getElementById('undoButton').addEventListener('click', () =>{
+    undo();
+} );
+
 
 // Global variables for face dragging.
 let dragStart = null;
