@@ -438,16 +438,25 @@ timerBox.innerHTML = `
 `;
 document.body.appendChild(timerBox);
 
-// Create audio play button
+// Create audio play/pause button
 const playbutton = document.createElement('div');
 playbutton.innerHTML = '&#9654;'; // Unicode play icon
 playbutton.classList.add('icon', 'play-button');
 document.body.appendChild(playbutton);
+
+const audio = document.getElementById('videogame');
+let isPlaying = false;
+
 playbutton.addEventListener('click', () => {
-    const audio = document.getElementById('videogame');
-    audio.play();
-}
-);
+    if (isPlaying) {
+        audio.pause();
+        playbutton.innerHTML = '&#9654;'; // Change to play icon
+    } else {
+        audio.play();
+        playbutton.innerHTML = '&#10074;&#10074;'; // Change to pause icon
+    }
+    isPlaying = !isPlaying;
+});
 
 // Create number input for turningLayers
 const turnBox = document.createElement('div');
