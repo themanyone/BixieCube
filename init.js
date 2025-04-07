@@ -43,6 +43,8 @@ export const controls = new TrackballControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.2;  // increased damping for tighter rotation
 controls.rotateSpeed = 2;    // reduced rotation speed for a more controlled feel
+controls.minDistance = 6;
+controls.maxDistance = 50;
 
 // Add an emissive material to make the cube glow from within
 const defaultMaterial = new THREE.MeshStandardMaterial({
@@ -204,11 +206,9 @@ animate();
 
 // Close popovers when clicking outside popover or icon elements
 document.addEventListener('click', (event) => {
-    if (!event.target.closest('.popover') && !event.target.closest('.icon')) {
-        document.querySelectorAll('.popover').forEach(popover => {
-            popover.style.display = 'none';
-        });
-    }
+    document.querySelectorAll('.popover').forEach(popover => {
+        popover.style.display = 'none';
+    });
 }, true);
 
 
@@ -259,7 +259,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You may obtain a complete copy of the GNU General Public License along
-with this <a href="https://github.com/themanyone/BixieCube"><span>project on GitHub</span></a>, or write to the Free Software Foundation, Inc.,
+with this <a href="https://github.com/themanyone/BixieCube">
+<span>project on GitHub</span></a>, or write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 </code></pre>
 `;
@@ -335,7 +336,7 @@ document.body.appendChild(helpPopover);
 
 // Create a circle with a line through it element
 const cheatIcon = document.createElement('div');
-cheatIcon.innerHTML = "&#128369;";
+cheatIcon.innerHTML = "&#128711;";
 cheatIcon.classList.add('icon', 'cheat-icon');
 document.body.appendChild(cheatIcon);
 

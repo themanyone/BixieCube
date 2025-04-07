@@ -31,10 +31,29 @@ body {
     display: none;
     z-index: 1000;
 }
-#timerBox {
+#timerBox, #turnBox {
+    position: absolute;
+    color: #ce496b;
+    bottom: 50px;
+}
+
+#turnBox{
+    display: flex;
+    bottom: 10px;
+    flex-direction: row;
+    font-size: 2rem;
     color: #ce496b;
     position: absolute;
-    bottom: 50px;
+    bottom: 10px;
+}
+
+@media (max-width: 512px) {
+    #timerBox {
+        bottom: 120px;
+    }
+    #turnBox {
+        bottom: 80px;
+    }
 }
 #title {
     position: absolute;
@@ -72,21 +91,23 @@ body {
 }
 
 .help-icon {
-    top: 25px;
+    top: 15px;
     right: 60px;
 }
 
 .cheat-icon {
-    top: 25px;
+    top: 20px;
     left: 60px;
+    font-weight: bolder;
 }
 
 .play-button {
     background-color: #ce496b;
     color: white;
-    padding: 10px 20px;
+    padding: 5px 10px;
     border-radius: 8px;
-    font-size: 1.5rem;
+    font-size: 30px;
+    font-weight: bold;
     cursor: pointer;
     display: fixed;
     z-index: 1000;
@@ -97,9 +118,9 @@ body {
 .undo-button {
     background-color: #ce496b;
     color: white;
-    font-size: 20px;
+    font-size: 28px;
     font-weight: bold;
-    padding: 5px 20px;
+    padding: 5px 10px;
     border-radius: 8px;
     cursor: pointer;
     display: absolute;
