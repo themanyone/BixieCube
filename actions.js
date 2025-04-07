@@ -112,13 +112,7 @@ function rotateFace(face, angle, layersCount = 1, sound = true) {
             isRotating = false;
             
             if (!isUndoing) {
-                if (checkCubeSolved() && startGameBtn.textContent != 'Start Game') {
-                    console.log("Cube solved!");
-                    celebrateWin(); // <-- Trigger the celebration.
-                    stopGame();
-                    startGameBtn.textContent = 'Start Game';
-                    return;
-                }
+                
                 // if finalizing a twist, store the whole move
                 if (Math.abs(angle) === twist * 3) {
                     angle = twist * 4 * Math.sign(angle);
@@ -126,6 +120,13 @@ function rotateFace(face, angle, layersCount = 1, sound = true) {
                 // but don't store preview twists
                 if (Math.abs(angle) !== twist) {
                     moveHistory.push({ face, angle, layersCount });
+                    if (checkCubeSolved() && startGameBtn.textContent != 'Start Game') {
+                        console.log("Cube solved!");
+                        celebrateWin(); // <-- Trigger the celebration.
+                        stopGame();
+                        startGameBtn.textContent = 'Start Game';
+                        return;
+                    }
                 }
             }
 
@@ -145,8 +146,7 @@ function rotateFace(face, angle, layersCount = 1, sound = true) {
     requestAnimationFrame(animateRotation);
 }
 
-// New helper to check if the cube is solved.
-// You can replace the content of this function with your own solved-state logic.
+// helper to check if the cube is solved.
 function checkCubeSolved() {
     const faceColors = {
         front: new Set(),
@@ -157,14 +157,14 @@ function checkCubeSolved() {
         bottom: new Set(),
     };
     const checkFaces = [
-        { test: cubie => Math.abs(cubie.position.z - getOffset()) < eps, face: 'front', materialIndex: 4 },
-        { test: cubie => Math.abs(cubie.position.z + getOffset()) < eps, face: 'back', materialIndex: 5 },
-        { test: cubie => Math.abs(cubie.position.x + getOffset()) < eps, face: 'left', materialIndex: 1 },
-        { test: cubie => Math.abs(cubie.position.x - getOffset()) < eps, face: 'right', materialIndex: 0 },
-        { test: cubie => Math.abs(cubie.position.y - getOffset()) < eps, face: 'top', materialIndex: 2 },
+        { test: cubie => Math.abs(cubie.position.z - getOffset()) < eps, face: 'front',  materialIndex: 4 },
+        { test: cubie => Math.abs(cubie.position.z + getOffset()) < eps, face: 'back',   materialIndex: 5 },
+        { test: cubie => Math.abs(cubie.position.x + getOffset()) < eps, face: 'left',   materialIndex: 1 },
+        { test: cubie => Math.abs(cubie.position.x - getOffset()) < eps, face: 'right',  materialIndex: 0 },
+        { test: cubie => Math.abs(cubie.position.y - getOffset()) < eps, face: 'top',    materialIndex: 2 },
         { test: cubie => Math.abs(cubie.position.y + getOffset()) < eps, face: 'bottom', materialIndex: 3 }
     ];
-    
+    // Tally up the material colors of each face
     bixieCube.children.forEach(cubie => {
         checkFaces.forEach(({ test, face, materialIndex }) => {
             if (test(cubie)) {
@@ -172,8 +172,97 @@ function checkCubeSolved() {
             }
         });
     });
-    
+    // If faceColors set.size === 1, every set of faces is one, uniform color
     return Object.values(faceColors).every(set => set.size === 1);
+}
+
+// Find (t)opmost, (l)eftmost, (r)ightmost, or (b)ottommost face.
+function findFace(direction = 't') {
+    // 1. Define the center points of each face in world space.
+    const faceCenters = {
+        front: new THREE.Vector3(0, 0, getOffset()),
+        back: new THREE.Vector3(0, 0, -getOffset()),
+        left: new THREE.Vector3(-getOffset(), 0, 0),
+        right: new THREE.Vector3(getOffset(), 0, 0),
+        top: new THREE.Vector3(0, getOffset(), 0),
+        bottom: new THREE.Vector3(0, -getOffset(), 0),
+    };
+
+    // 2. Project each face center to screen space.
+    const screenPositions = {};
+    for (const face in faceCenters) {
+        const center = faceCenters[face].clone();
+        center.project(camera);
+        screenPositions[face] = {
+            x: (center.x + 1) / 2 * renderer.domElement.clientWidth,
+            y: (-center.y + 1) / 2 * renderer.domElement.clientHeight,
+            z: center.z
+        };
+    }
+
+    // 3. Find the face closest to direction.
+    let bestFace = null;
+    let bestValue = direction === 'b' ? -Infinity : Infinity; // Initialize for bottommost or topmost
+    if (direction === 'r') {
+        bestValue = -Infinity;
+    }
+    if (direction === 'k') {
+        bestValue = -Infinity;
+    }
+    for (const face in screenPositions) {
+        let currentValue;
+        //FIXME: It can't find the frontmost face because screenPositions is two dimensional
+        switch (direction) {
+            case 'f':
+                currentValue = screenPositions[face].z;
+                if (currentValue < bestValue) {
+                    bestValue = currentValue;
+                    bestFace = face;
+                }
+                break;
+            case 'u':
+            case 't':
+                currentValue = screenPositions[face].y;
+                if (currentValue < bestValue) {
+                    bestValue = currentValue;
+                    bestFace = face;
+                }
+                break;
+            case 'b':
+                currentValue = screenPositions[face].y;
+                if (currentValue > bestValue) {
+                    bestValue = currentValue;
+                    bestFace = face;
+                }
+                break;
+            case 'l':
+                currentValue = screenPositions[face].x;
+                if (currentValue < bestValue) {
+                    bestValue = currentValue;
+                    bestFace = face;
+                }
+                break;
+            case 'r':
+                currentValue = screenPositions[face].x;
+                if (currentValue > bestValue) {
+                    bestValue = currentValue;
+                    bestFace = face;
+                }
+                break;
+            case 'k':
+                currentValue = screenPositions[face].z;
+                if (currentValue > bestValue) {
+                    bestValue = currentValue;
+                    bestFace = face;
+                }
+                break;
+            default:
+                console.error("Invalid direction:", direction);
+                return null;
+        }
+    }
+
+    return bestFace;
 }
 
 // Key event handler for hotkeys
@@ -183,7 +272,7 @@ window.addEventListener('keydown', e => {
         const n = parseInt(e.key, 10);
         turningLayers = Math.max(1, Math.min(n, Math.floor(numPerAxis / 2)));
         console.log('Rotate layers set to:', turningLayers);
-        document.getElementById("number").value = turningLayers;
+        document.getElementById("layersInput").value = turningLayers;
         return;
     }
     // Hotkey for undo (last move)
@@ -201,22 +290,16 @@ window.addEventListener('keydown', e => {
         }
         return;
     }
-    // Process face rotation keys.
-    let angle;
-    switch (e.key) {
-        case 'a': angle = Math.PI / 2; rotateFace('front', angle, turningLayers); break;
-        case 'A': angle = -Math.PI / 2; rotateFace('front', angle, turningLayers); break;
-        case 'b': angle = Math.PI / 2; rotateFace('back', angle, turningLayers); break;
-        case 'B': angle = -Math.PI / 2; rotateFace('back', angle, turningLayers); break;
-        case 'c': angle = Math.PI / 2; rotateFace('left', angle, turningLayers); break;
-        case 'C': angle = -Math.PI / 2; rotateFace('left', angle, turningLayers); break;
-        case 'd': angle = Math.PI / 2; rotateFace('right', angle, turningLayers); break;
-        case 'D': angle = -Math.PI / 2; rotateFace('right', angle, turningLayers); break;
-        case 'e': angle = Math.PI / 2; rotateFace('top', angle, turningLayers); break;
-        case 'E': angle = -Math.PI / 2; rotateFace('top', angle, turningLayers); break;
-        case 'f': angle = Math.PI / 2; rotateFace('bottom', angle, turningLayers); break;
-        case 'F': angle = -Math.PI / 2; rotateFace('bottom', angle, turningLayers); break;
-        default: break;
+    // Process face rotation "fublr" keys.
+    let angle= Math.PI / 2;
+    const theKey = e.key.toLowerCase();
+    if ("futblrk".includes(theKey)){        
+        const face = findFace(theKey);
+        if (['front', 'top', 'right'].includes(face)) angle = -angle;
+        if ("FUTBLRK".includes(e.key)) {
+            angle = -angle;
+        }
+        rotateFace(face, angle, turningLayers);
     }
 });
 
@@ -278,15 +361,29 @@ function computeFaceCenterScreen(box, face, camera, renderer) {
         y: (-pos.y + 1) / 2 * renderer.domElement.clientHeight
     };
 }
-   
-function pressDown(event) {
-    event.preventDefault();
+
+function getCanvasRelativePosition(event) {
+    const canvasRect = renderer.domElement.getBoundingClientRect();
+    const devicePixelRatio = window.devicePixelRatio || 1
     if (event.changedTouches){
         event = event.changedTouches[0];
     }
+    let clientX = event.clientX;
+    let clientY = event.clientY;
+    // Adjust for canvas offset and device pixel ratio
+    const x = clientX - canvasRect.left / devicePixelRatio;
+    const y = clientY - canvasRect.top  / devicePixelRatio;
+    return { x, y };
+}
+
+function pressDown(event) {
+    event.preventDefault();
+    const devicePixelRatio = window.devicePixelRatio || 1
+    const { x, y } = getCanvasRelativePosition(event);
+
     const mouse = new THREE.Vector2(
-    (event.clientX / renderer.domElement.clientWidth) * 2 - 1,
-    -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
+        (x / renderer.domElement.clientWidth) * 2 - 1,
+        -(y / renderer.domElement.clientHeight) * 2 + 1
     );
     raycaster.setFromCamera(mouse, camera);
     // Intersect with the cube's children to get a hit point on the cube.
@@ -301,7 +398,7 @@ function pressDown(event) {
         
         // Compute the 3D center of the selected face.
         faceCenterScreen = computeFaceCenterScreen(box, selectedFace, camera, renderer);
-        dragStart = { x: event.clientX, y: event.clientY };
+        dragStart = { x, y };
         controls.enabled = false;
     }
 }
@@ -315,7 +412,7 @@ function turnDirection(start, end){
     const dy = end.y - start.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     // Only proceed if the drag is significant.
-    if (distance > 20) {
+    if (distance > 100) {
         // Compute vectors from the face center (screen coords) to the drag start and end.
         const v1 = { x: start.x - faceCenterScreen.x, y: start.y - faceCenterScreen.y };
         const v2 = { x: end.x - faceCenterScreen.x,   y: end.y - faceCenterScreen.y };
@@ -330,11 +427,10 @@ function turnDirection(start, end){
     return null;
 }
 function release(event) {
-    if (event.changedTouches){
-        event = event.changedTouches[0];
-    }
+    event.preventDefault();
+    const { x, y } = getCanvasRelativePosition(event);
     if (selectedFace && faceCenterScreen && dragStart) {
-        const dragEnd = { x: event.clientX, y: event.clientY };
+        const dragEnd = { x, y };
         const angle = 3 * twist * dragDirection;
         if (angle) {
             rotateFace(selectedFace, angle, turningLayers);
@@ -355,11 +451,9 @@ renderer.domElement.addEventListener('touchend', release);
 
 function dragFace(event){
     if (isRotating || !dragStart) return;
-    if (event.changedTouches){
-        event = event.changedTouches[0];
-    }
+    const { x, y } = getCanvasRelativePosition(event);
     if (selectedFace && faceCenterScreen) {
-        const dragCurrent = { x: event.clientX, y: event.clientY };
+        const dragCurrent = { x, y };
         let direction = turnDirection(dragStart, dragCurrent, false);
         if (direction === dragDirection) return; // ignore subsequent dragging
         // dragDirection has changed, so we restore face rotation
@@ -493,6 +587,8 @@ function applyTextureToCubie(cubie, face, texture, i, j) {
     const cubieTexture = texture.clone();
     // Force texture to use sRGB encoding to fix brightness.
     cubieTexture.encoding = THREE.sRGBEncoding;
+    cubieTexture.minFilter = THREE.NearestFilter;
+    cubieTexture.magFilter = THREE.NearestFilter;   
     cubieTexture.wrapS = THREE.ClampToEdgeWrapping;
     cubieTexture.wrapT = THREE.ClampToEdgeWrapping;
     // Mapping: right:0, left:1, top:2, bottom:3, front:4, back:5
@@ -547,7 +643,7 @@ startGameBtn.addEventListener('click', (e) => {
         }
         return;
     }
-    resetCube.click();
+    // resetCube.click();
     e.target.textContent = 'Reset';
     scrambleCube();
     setTimeout(() => {
@@ -580,8 +676,7 @@ function stopGame() {
         dragDirection = 0;
         controls.enabled = true;
         turningLayers = 1; // Turn one layer by default
-        document.getElementById('number').value = 1;
-        // resetCube.click();
+        document.getElementById('layersInput').value = 1;
     }
 }
 
@@ -612,7 +707,6 @@ function celebrateWin() {
     setTimeout(function(){
         pyro.style.display = "none";
         wt.style.display = "none";
-        resetCube.click();
     }, 8000);
 }
 
@@ -630,7 +724,7 @@ document.getElementById('difficulty').addEventListener('input', (e) => {
 
 document.getElementById('increment').addEventListener('click', 
     (e)=>{
-        const input = document.getElementById('number');
+        const input = document.getElementById('layersInput');
         const val = parseInt(input.value);
         turningLayers = val;        
         turningLayers = Math.max(1, Math.min(val, Math.floor(numPerAxis / 2)));
@@ -638,7 +732,7 @@ document.getElementById('increment').addEventListener('click',
     });
 document.getElementById('decrement').addEventListener('click', 
     (e)=>{
-        const input = document.getElementById('number');
+        const input = document.getElementById('layersInput');
         const val = parseInt(input.value);
         turningLayers = val;
     });

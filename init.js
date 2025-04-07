@@ -22,19 +22,6 @@ export function createFaceMaterial(color, letter) {
     return new THREE.MeshBasicMaterial({ map: createFaceTexture(color, letter) });
 }
 
-// Colors and letters for each side:
-// Right: 'D', Left: 'C',
-// Top: 'E', Bottom: 'F',
-// Front: 'A', Back: 'B'
-export const faceDefinitions = [
-    { color: '#00ff00', letter: 'D' },
-    { color: '#0000ff', letter: 'C' },
-    { color: '#f8f8f8', letter: 'E' },
-    { color: '#ffff00', letter: 'F' },
-    { color: '#ff00a5', letter: 'A' },
-    { color: '#a50000', letter: 'B' }
-];
-
 // Default material for unlabelled (inner) faces
 //export const defaultMaterial = new THREE.MeshBasicMaterial({ color: 0x111111 });
 
@@ -59,7 +46,7 @@ controls.rotateSpeed = 0.7;    // reduced rotation speed for a more controlled f
 
 // Add an emissive material to make the cube glow from within
 const defaultMaterial = new THREE.MeshStandardMaterial({
-    emissive: 0xffffff, // White glow
+    emissive: 0xcccccc, // White glow
     emissiveIntensity: 0.01, // Adjust intensity as needed
     color: 0x000000 // Base color
 });
@@ -106,7 +93,12 @@ function buildCube() {
     
     // Recalculate offset based on updated numPerAxis
     const currentOffset = getOffset();
-    
+    const colors = ['#00ff00',
+                    '#0000ff',
+                    '#f8f8f8',
+                    '#ffff00',
+                    '#ff00a5',
+                    '#a50000'];
     for (let i = 0; i < numPerAxis; i++) {
         for (let j = 0; j < numPerAxis; j++) {
             for (let k = 0; k < numPerAxis; k++) {
@@ -117,40 +109,28 @@ function buildCube() {
                 const z = k * (cubieSize + gap) - currentOffset;
                 const eps = 0.001;
                 // Right face
-                if (i === numPerAxis - 1 && isCenter(j) && isCenter(k)) {
-                    materials[0] = createFaceMaterial(faceDefinitions[0].color, faceDefinitions[0].letter);
-                } else if (Math.abs(x - currentOffset) < eps) {
-                    materials[0] = createFaceMaterial(faceDefinitions[0].color, "");
+                if (i === numPerAxis - 1) {
+                    materials[0] = createFaceMaterial(colors[0], "");
                 }
                 // Left face
-                if (i === 0 && isCenter(j) && isCenter(k)) {
-                    materials[1] = createFaceMaterial(faceDefinitions[1].color, faceDefinitions[1].letter);
-                } else if (Math.abs(x + currentOffset) < eps) {
-                    materials[1] = createFaceMaterial(faceDefinitions[1].color, "");
+                if (i === 0) {
+                    materials[1] = createFaceMaterial(colors[1], "");
                 }
                 // Top face
-                if (j === numPerAxis - 1 && isCenter(i) && isCenter(k)) {
-                    materials[2] = createFaceMaterial(faceDefinitions[2].color, faceDefinitions[2].letter);
-                } else if (Math.abs(y - currentOffset) < eps) {
-                    materials[2] = createFaceMaterial(faceDefinitions[2].color, "");
+                if (j === numPerAxis - 1) {
+                    materials[2] = createFaceMaterial(colors[2], "");
                 }
                 // Bottom face
-                if (j === 0 && isCenter(i) && isCenter(k)) {
-                    materials[3] = createFaceMaterial(faceDefinitions[3].color, faceDefinitions[3].letter);
-                } else if (Math.abs(y + currentOffset) < eps) {
-                    materials[3] = createFaceMaterial(faceDefinitions[3].color, "");
+                if (j === 0) {
+                    materials[3] = createFaceMaterial(colors[3], "");
                 }
                 // Front face
-                if (k === numPerAxis - 1 && isCenter(i) && isCenter(j)) {
-                    materials[4] = createFaceMaterial(faceDefinitions[4].color, faceDefinitions[4].letter);
-                } else if (Math.abs(z - currentOffset) < eps) {
-                    materials[4] = createFaceMaterial(faceDefinitions[4].color, "");
+                if (k === numPerAxis - 1) {
+                    materials[4] = createFaceMaterial(colors[4], "");
                 }
                 // Back face
-                if (k === 0 && isCenter(i) && isCenter(j)) {
-                    materials[5] = createFaceMaterial(faceDefinitions[5].color, faceDefinitions[5].letter);
-                } else if (Math.abs(z + currentOffset) < eps) {
-                    materials[5] = createFaceMaterial(faceDefinitions[5].color, "");
+                if (k === 0) {
+                    materials[5] = createFaceMaterial(colors[5], "");
                 }
 
                 const cubie = new THREE.Mesh(geometry, materials);
@@ -234,7 +214,10 @@ popover.classList.add('popover');
 popover.style.top = '60px';
 popover.style.left = '20px';
 popover.style.display = 'none';  // <-- Initialize as hidden
-popover.innerHTML = `<h2>Upgrade to Premium Access</h2>
+popover.innerHTML = `<h1><a href="/" target="_blank">Home</a>
+PC and Electronic Repair
+</h1>
+<h3>Unlock Premium Access</h3>
 
 <p>Unlock exclusive features and support the development of BixieCube by becoming a Premium Member.</p>
 
@@ -326,8 +309,13 @@ helpPopover.innerHTML = `
     <p>Click anywhere outside the popover to close it.</p>
     <hr>
     <h3>Keyboard Help</h3>
-    <p>abcdf - Rotate face clockwise</p>
-    <p>ABCDF - Rotate face counterclockwise</p>
+    <p>f - Rotate (f)ront face clockwise</p>
+    <p>t - Rotate (t)op face clockwise</p>
+    <p>r - Rotate (r)ight face clockwise</p>
+    <p>b - Rotate (b)ottom face clockwise</p>
+    <p>l - Rotate (l)eft face clockwise</p>
+    <p>k - Rotate bac(k) face clockwise</p>
+    <p>FTRBLK - Rotate faces counterclockwise</p>
     <p>1-9   - Layers to rotate</p>
     <p>z - undo last move</p>
     <p>r - redo last move</p>
@@ -425,27 +413,28 @@ playbutton.addEventListener('click', () => {
 const turnBox = document.createElement('div');
 turnBox.id = 'turnBox';
 turnBox.innerHTML = `Layers:
-    <input type="text" id="number" value="1">
+    <input type="text" id="layersInput" value="1">
     <span class="spinner">
         <button id="increment">▲</button>
         <button id="decrement">▼</button>
     </span>
 `;
 document.body.appendChild(turnBox);
+const layersInput = document.getElementById('layersInput');
 
 document.getElementById('increment').addEventListener('click', 
     (e)=>{
-        const input = document.getElementById('number');
-        const val = parseInt(input.value);
+        const layersInput = document.getElementById('layersInput');
+        const val = parseInt(layersInput.value);
         if (val < 9){
-            input.value = val + 1;
+            layersInput.value = val + 1;
         }
     });
 document.getElementById('decrement').addEventListener('click', 
     (e)=>{
-        const input = document.getElementById('number');
-        const val = parseInt(input.value);
+        const input = document.getElementById('layersInput');
+        const val = parseInt(layersInput.value);
         if (val > 1){
-            input.value = val - 1;
+            layersInput.value = val - 1;
         }
     });
