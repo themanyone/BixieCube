@@ -227,9 +227,9 @@ popover.style.display = 'none';  // <-- Initialize as hidden
 popover.innerHTML = `<h1><a href="/" target="_blank">Home</a>
 PC and Electronic Repair
 </h1>
-<h3>Unlock Premium Access</h3>
+<h3>Unlock Premium</h3>
 
-<p>Unlock exclusive features and support the development of BixieCube by becoming a Premium Member.</p>
+<p>Gain exclusive access and support the development of BixieCube by becoming a Premium Member.</p>
 
 <ul>
 <li>BixieCube <a href="https://github.com/themanyone/BixieCube"><span>project on GitHub</span></a></li>
@@ -404,6 +404,7 @@ document.getElementById('alphaInput').addEventListener('input', (event) => {
 document.getElementById('numPerAxisInput').addEventListener('change', (event) => {
     numPerAxis = parseInt(event.target.value, 10);
     camera.position.z = 2 + numPerAxis;
+    controls.minDistance = numPerAxis + 1;
     buildCube();
 });
 
