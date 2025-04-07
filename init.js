@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'orbit';
+import { TrackballControls } from 'addons/controls/TrackballControls.js';
 import { RoundedBoxGeometry } from 'addons/geometries/RoundedBoxGeometry.js';
 
 // Create a canvas texture for a colored face with a letter label
@@ -30,7 +30,7 @@ export const scene = new THREE.Scene();
 export const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
-    0.1,
+    0.5,
     1000
 );
 export const renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -38,11 +38,11 @@ renderer.setClearColor(0x000000, 0);  // Set alpha to 0 for a transparent backgr
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Add OrbitControls for interaction
-export const controls = new OrbitControls(camera, renderer.domElement);
+// Add TrackballControls for interaction
+export const controls = new TrackballControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.2;  // increased damping for tighter rotation
-controls.rotateSpeed = 0.7;    // reduced rotation speed for a more controlled feel
+controls.rotateSpeed = 2;    // reduced rotation speed for a more controlled feel
 
 // Add an emissive material to make the cube glow from within
 const defaultMaterial = new THREE.MeshStandardMaterial({
@@ -201,6 +201,16 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
+
+// Close popovers when clicking outside popover or icon elements
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.popover') && !event.target.closest('.icon')) {
+        document.querySelectorAll('.popover').forEach(popover => {
+            popover.style.display = 'none';
+        });
+    }
+}, true);
+
 
 // Create hamburger icon element
 const hamburger = document.createElement('div');
@@ -368,16 +378,6 @@ cheatIcon.addEventListener('click', () => {
 helpIcon.addEventListener('click', () => {
     helpPopover.style.display = (helpPopover.style.display === 'none') ? 'block' : 'none';
 });
-
-// Close popovers when clicking outside popover or icon elements
-document.addEventListener('click', (event) => {
-    if (!event.target.closest('.popover') && !event.target.closest('.icon')) {
-        document.querySelectorAll('.popover').forEach(popover => {
-            popover.style.display = 'none';
-        });
-    }
-});
-
 
 // Toggle configuration popover on gear icon click
 gearIcon.addEventListener('click', () => {

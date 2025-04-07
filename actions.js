@@ -400,8 +400,10 @@ function pressDown(event) {
         // Compute the 3D center of the selected face.
         faceCenterScreen = computeFaceCenterScreen(box, selectedFace, camera, renderer);
         dragStart = { x, y };
-        controls.enabled = false;
-    }
+        controls.rotateSpeed = 0.0;
+    } else
+        // FIXME: Trackball needs to gradually transition, not jump when enabled
+        controls.rotateSpeed = 2;
 }
 renderer.domElement.addEventListener('mousedown', pressDown);
 renderer.domElement.addEventListener('touchstart', pressDown);
@@ -427,6 +429,7 @@ function turnDirection(start, end){
     }
     return null;
 }
+// Release face turning
 function release(event) {
     event.preventDefault();
     const { x, y } = getCanvasRelativePosition(event);
@@ -437,12 +440,12 @@ function release(event) {
             rotateFace(selectedFace, angle, turningLayers);
         }
     }
-    // Reset state and re-enable OrbitControls.
+    // Reset state and re-enable TrackballControls.
     selectedFace = null;
     faceCenterScreen = null;
     dragStart = null;
+    dragCubie = null;
     dragDirection = 0;
-    controls.enabled = true;
 }
 
 renderer.domElement.addEventListener('mouseup', release);
