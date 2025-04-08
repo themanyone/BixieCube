@@ -460,6 +460,12 @@ playbutton.addEventListener('click', () => {
     isPlaying = !isPlaying;
 });
 
+// On audio stopped, change button back to play
+audio.addEventListener('ended', () => {
+    playbutton.innerHTML = '&#9654;'; // Change to play icon
+    isPlaying = false;
+});
+
 // Create undo button
 const undoButton = document.createElement('div');
 undoButton.textContent = 'Undo';
