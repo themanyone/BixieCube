@@ -246,7 +246,7 @@ PC and Electronic Repair
 <h2>LICENSE</h2>
 
 <pre><code>BixieCube
-Copyright (C) 2025 by Henry Kroll III, DBA [TheNerdShow.com](http://thenerdshow.com/)
+Copyright (C) 2025 by Henry Kroll III, nospam (at) <a href="//thenerdshow.com/">TheNerdShow.com</a>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
