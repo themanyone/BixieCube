@@ -1,0 +1,51 @@
+.number-input {
+    position: relative;
+    width: 100px;
+}
+
+.number-input input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    -moz-appearance: textfield; /* Hide spinners in Firefox */
+}
+
+.number-input input[type="number"]::-webkit-inner-spin-button,
+.number-input input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none; /* Hide spinners in Chrome/Safari */
+    margin: 0;
+}
+
+.spinner {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.spinner button {
+    background-color: rgba(0, 0, 0, 0.0);
+    color: #ce496b;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 20px;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    bottom: 10px;
+}
+
+.spinner button:hover {
+    color:white;
+}
+
+#layersInput {
+    font-size: 2rem;
+    color: #ce496b;
+    background-color: rgba(0, 0, 0, 0.0);
+    border: none;
+    padding: 5px;
+    width: 20px;
+    position: relative;
+    bottom: 10px;
+}
