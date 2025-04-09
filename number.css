@@ -40,12 +40,45 @@
 }
 
 #layersInput {
-    font-size: 2rem;
-    color: #ce496b;
     background-color: rgba(0, 0, 0, 0.0);
+    color: #ce496b;
+    font-weight: bold;
     border: none;
     padding: 5px;
     width: 20px;
     position: relative;
     bottom: 10px;
+}
+
+.overlay {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    color: #ce496b;
+    font-size: 2.5rem;
+    font-weight: bold;
+    display: none;
+    z-index: 1000;
+}
+.overlay input {
+    font-size: 2.5rem;
+}
+#timerBox {
+    bottom: 95px;
+    margin: auto;
+    align-items: center;
+}
+#turnBox{
+    display: flex;
+    flex-direction: row;
+    padding: 20px 10px 0px 10px;
+    bottom: 10px;
+}
+@media (max-width: 512px) {
+    #timerBox {
+        bottom: 165px;
+    }
+    #turnBox {
+        bottom: 80px;
+    }
 }

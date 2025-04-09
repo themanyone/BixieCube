@@ -20,41 +20,7 @@ body {
     position: absolute;
     top: 0
 }
-.overlay {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    color: white;
-    font-size: 14px;
-    display: none;
-    z-index: 1000;
-}
-#timerBox, #turnBox {
-    position: absolute;
-    color: #ce496b;
-    bottom: 50px;
-}
 
-#turnBox{
-    display: flex;
-    bottom: 10px;
-    flex-direction: row;
-    font-size: 2rem;
-    color: #ce496b;
-    position: absolute;
-    bottom: 10px;
-}
-
-@media (max-width: 512px) {
-    #timerBox {
-        bottom: 120px;
-    }
-    #turnBox {
-        bottom: 80px;
-    }
-}
 #title {
     position: absolute;
     top: 10px;
@@ -120,13 +86,16 @@ body {
     color: white;
     font-size: 28px;
     font-weight: bold;
-    padding: 5px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10px 0 7px;
     border-radius: 8px;
     cursor: pointer;
-    display: absolute;
     z-index: 1000;
     bottom: 20px;
     left: 100px;
+    height: 45px;
 }
 
 pre {
@@ -140,7 +109,7 @@ pre {
 .start-game-button {
     background-color: #ce496b;
     color: white;
-    font-size: 16px;
+    font-size: 1.5rem;
     font-weight: bold;
     padding: 10px 20px;
     border-radius: 8px;

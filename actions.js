@@ -526,70 +526,70 @@ function paintFacesWithImage(face, texture) {
 
     bixieCube.children.forEach(cubie => {
     const currentOffset = getOffset();
-        let qualifies = false;
-        let i, j;
-        // Use cubieSize as a tolerance threshold.
-        switch (face) {
-            case 'front':
-                qualifies = Math.abs(cubie.position.z - currentOffset) < cubieSize / 2;
-                if (qualifies) {
-                    i = cubie.userData.i !== undefined ? cubie.userData.i :
+    let qualifies = false;
+    let i, j;
+    // Use cubieSize as a tolerance threshold.
+    switch (face) {
+        case 'front':
+            qualifies = Math.abs(cubie.position.z - currentOffset) < cubieSize / 2;
+            if (qualifies) {
+                i = cubie.userData.i !== undefined ? cubie.userData.i :
+                Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
+                j = cubie.userData.j !== undefined ? cubie.userData.j :
+                    Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                applyTextureToCubie(cubie, face, texture, i, j);
+            }
+            break;
+        case 'back':
+            qualifies = Math.abs(cubie.position.z + currentOffset) < cubieSize / 2;
+            if (qualifies) {
+                i = cubie.userData.i !== undefined ? cubie.userData.i :
+                Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
+                j = cubie.userData.j !== undefined ? cubie.userData.j :
+                    Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                applyTextureToCubie(cubie, face, texture, numPerAxis - i - 1, j);
+            }
+            break;
+        case 'right':
+            qualifies = Math.abs(cubie.position.x - currentOffset) < cubieSize / 2;
+            if (qualifies) {
+                j = cubie.userData.k !== undefined ? cubie.userData.k :
+                    Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
+                i = cubie.userData.j !== undefined ? cubie.userData.j :
+                    Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                    applyTextureToCubie(cubie, face, texture, numPerAxis - j - 1, i);
+            }
+            break;
+        case 'left':
+            qualifies = Math.abs(cubie.position.x + currentOffset) < cubieSize / 2;
+            if (qualifies) {
+                j = cubie.userData.k !== undefined ? cubie.userData.k :
+                    Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
+                i = cubie.userData.j !== undefined ? cubie.userData.j :
+                    Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                applyTextureToCubie(cubie, face, texture, j, i);
+            }
+            break;
+        case 'top':
+            qualifies = Math.abs(cubie.position.y - currentOffset) < cubieSize / 2;
+            if (qualifies) {
+                i = cubie.userData.i !== undefined ? cubie.userData.i :
                     Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
-                    j = cubie.userData.j !== undefined ? cubie.userData.j :
-                        Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
+                j = cubie.userData.k !== undefined ? cubie.userData.k :
+                    Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
+                    applyTextureToCubie(cubie, face, texture, i, numPerAxis - j - 1);
+            }
+            break;
+        case 'bottom':
+            qualifies = Math.abs(cubie.position.y + currentOffset) < cubieSize / 2;
+            if (qualifies) {
+                i = cubie.userData.i !== undefined ? cubie.userData.i :
+                    Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
+                j = cubie.userData.k !== undefined ? cubie.userData.k :
+                    Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
                     applyTextureToCubie(cubie, face, texture, i, j);
-                }
-                break;
-            case 'back':
-                qualifies = Math.abs(cubie.position.z + currentOffset) < cubieSize / 2;
-                if (qualifies) {
-                    i = cubie.userData.i !== undefined ? cubie.userData.i :
-                    Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
-                    j = cubie.userData.j !== undefined ? cubie.userData.j :
-                        Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
-                    applyTextureToCubie(cubie, face, texture, numPerAxis - i - 1, j);
-                }
-                break;
-            case 'right':
-                qualifies = Math.abs(cubie.position.x - currentOffset) < cubieSize / 2;
-                if (qualifies) {
-                    j = cubie.userData.k !== undefined ? cubie.userData.k :
-                        Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
-                    i = cubie.userData.j !== undefined ? cubie.userData.j :
-                        Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
-                        applyTextureToCubie(cubie, face, texture, numPerAxis - j - 1, i);
-                }
-                break;
-            case 'left':
-                qualifies = Math.abs(cubie.position.x + currentOffset) < cubieSize / 2;
-                if (qualifies) {
-                    j = cubie.userData.k !== undefined ? cubie.userData.k :
-                        Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
-                    i = cubie.userData.j !== undefined ? cubie.userData.j :
-                        Math.round((cubie.position.y + currentOffset) / (cubieSize + gap));
-                    applyTextureToCubie(cubie, face, texture, j, i);
-                }
-                break;
-            case 'top':
-                qualifies = Math.abs(cubie.position.y - currentOffset) < cubieSize / 2;
-                if (qualifies) {
-                    i = cubie.userData.i !== undefined ? cubie.userData.i :
-                        Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
-                    j = cubie.userData.k !== undefined ? cubie.userData.k :
-                        Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
-                        applyTextureToCubie(cubie, face, texture, i, numPerAxis - j - 1);
-                }
-                break;
-            case 'bottom':
-                qualifies = Math.abs(cubie.position.y + currentOffset) < cubieSize / 2;
-                if (qualifies) {
-                    i = cubie.userData.i !== undefined ? cubie.userData.i :
-                        Math.round((cubie.position.x + currentOffset) / (cubieSize + gap));
-                    j = cubie.userData.k !== undefined ? cubie.userData.k :
-                        Math.round((cubie.position.z + currentOffset) / (cubieSize + gap));
-                        applyTextureToCubie(cubie, face, texture, i, j);
-                }
-                break;
+            }
+            break;
         }
     });
 }
@@ -627,11 +627,12 @@ function paintBody(imageUrl) {
 
 export function scrambleCube() {
     const faces = ['front', 'back', 'left', 'right', 'top', 'bottom'];
-    for (let i = 0; i < difficulty; i++) {
-        const randomFace = faces[Math.floor(Math.random() * faces.length)];
-        const randomAngle = Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2;
-        rotateFace(randomFace, randomAngle, Math.random() * Math.floor(numPerAxis / 2) + 1);
-    }
+    while (checkCubeSolved())
+        for (let i = 0; i < difficulty; i++) {
+            const randomFace = faces[Math.floor(Math.random() * faces.length)];
+            const randomAngle = Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2;
+            rotateFace(randomFace, randomAngle, Math.random() * Math.floor(numPerAxis / 2) + 1);
+        }
 }
 
 // Format seconds as MM:SS
@@ -687,7 +688,6 @@ function stopGame() {
         dragStart = null;
         selectedFace = null;
         dragDirection = 0;
-        controls.enabled = true;
         turningLayers = 1; // Turn one layer by default
         document.getElementById('layersInput').value = 1;
     }

@@ -194,7 +194,8 @@ function updateCubeAlpha(newAlpha) {
 buildCube();
 
 // Position camera so the whole cube is visible.
-camera.position.z = 5 + numPerAxis;
+camera.position.set(4, 4, 5 + getOffset());
+camera.lookAt(0, 0, 0);
 
 // Animation loop to render the scene continuously.
 function animate() {
@@ -434,9 +435,10 @@ startGameBtn.addEventListener('click', () => {
 // Create clock timer popover
 const timerBox = document.createElement('div');
 timerBox.id = 'timerBox';
+timerBox.classList.add('overlay');
 startGameBtn.style.display = 'block';
 timerBox.innerHTML = `
-    <h1 id="timerDisplay">01:00</h1>
+    <div id="timerDisplay">01:00</div>
 `;
 document.body.appendChild(timerBox);
 
@@ -477,6 +479,7 @@ document.body.appendChild(undoButton);
 // Create number input for turningLayers
 const turnBox = document.createElement('div');
 turnBox.id = 'turnBox';
+turnBox.classList.add('overlay');
 turnBox.innerHTML = `Layers:
     <input type="text" id="layersInput" value="1">
     <span class="spinner">
