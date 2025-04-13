@@ -11,11 +11,6 @@ function createFaceTexture(color, letter) {
     const context = canvas.getContext('2d');
     context.fillStyle = color;
     context.fillRect(0, 0, size, size);
-    context.font = 'bold 150px Arial';
-    context.fillStyle = '#000000';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(letter, size / 2, size / 2);
     return new THREE.CanvasTexture(canvas);
 }
 export function createFaceMaterial(color, letter) {
@@ -204,6 +199,13 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
+
+// --- Handle Window Resize ---
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
 // Close popovers when clicking outside popover or icon elements
 document.addEventListener('click', (event) => {
@@ -472,7 +474,7 @@ audio.addEventListener('ended', () => {
 const undoButton = document.createElement('div');
 undoButton.textContent = 'Undo';
 undoButton.id = 'undoButton';
-undoButton.innerHTML = "&#129192;"; // Unicode undo icon
+undoButton.innerHTML = "&#8634;"; // Unicode undo icon
 undoButton.classList.add('icon', 'undo-button');
 document.body.appendChild(undoButton);
 
