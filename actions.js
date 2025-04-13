@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { scene, camera, renderer, controls, bixieCube, cubieSize, gap, numPerAxis, getOffset } from './init.js';
+import { scene, camera, renderer, controls, bixieCube, cubieSize, gap, initialTransforms, numPerAxis, getOffset } from './init.js';
 
 // Global flags, history, and queues for rotations.
 let isRotating = false;
@@ -145,35 +145,32 @@ function rotateFace(face, angle, layersCount = 1, sound = true) {
     }
     requestAnimationFrame(animateRotation);
 }
+// Helper function to get dot product vs the world matrix
+function getDot(piece){
+    const initialState = initialTransforms.get(piece);
+    piece.updateMatrixWorld(true);
+    const currentQuat = new THREE.Quaternion();
+    piece.getWorldQuaternion(currentQuat);
+    return Math.abs(currentQuat.dot(initialState.quaternion));
+}
 
+// --- Add the Puzzle Solved Check Function ---
+const DOT_TOLERANCE = 0.001; // Quaternions are within tolerance of each othe
 // helper to check if the cube is solved.
 function checkCubeSolved() {
-    const faceColors = {
-        front: new Set(),
-        back: new Set(),
-        left: new Set(),
-        right: new Set(),
-        top: new Set(),
-        bottom: new Set(),
-    };
-    const checkFaces = [
-        { test: cubie => Math.abs(cubie.position.z - getOffset()) < eps, face: 'front',  materialIndex: 4 },
-        { test: cubie => Math.abs(cubie.position.z + getOffset()) < eps, face: 'back',   materialIndex: 5 },
-        { test: cubie => Math.abs(cubie.position.x + getOffset()) < eps, face: 'left',   materialIndex: 1 },
-        { test: cubie => Math.abs(cubie.position.x - getOffset()) < eps, face: 'right',  materialIndex: 0 },
-        { test: cubie => Math.abs(cubie.position.y - getOffset()) < eps, face: 'top',    materialIndex: 2 },
-        { test: cubie => Math.abs(cubie.position.y + getOffset()) < eps, face: 'bottom', materialIndex: 3 }
-    ];
-    // Tally up the material colors of each face
-    bixieCube.children.forEach(cubie => {
-        checkFaces.forEach(({ test, face, materialIndex }) => {
-            if (test(cubie)) {
-                faceColors[face].add(cubie.material[materialIndex].color.getHex());
-            }
-        });
-    });
-    // If faceColors set.size === 1, every set of faces is one, uniform color
-    return Object.values(faceColors).every(set => set.size === 1);
+    let Pieces = bixieCube.children;
+    // Get the first dot-product orientation of a piece
+    const firstDot = getDot(Pieces[0]);
+    // Compare that orientation with the rest of them
+    for (const piece of Pieces) {
+        const diff = Math.abs(getDot(piece) - firstDot);
+        if (diff > DOT_TOLERANCE) {
+            return false; // Orientation doesn't match
+        }
+    }
+    // If all pieces match their initial rotations
+    console.log("Puzzle solved!");
+    return true;
 }
 
 // Find (t)opmost, (l)eftmost, (r)ightmost, or (b)ottommost face.
@@ -601,7 +598,7 @@ function applyTextureToCubie(cubie, face, texture, i, j) {
     // Force texture to use sRGB encoding to fix brightness.
     cubieTexture.encoding = THREE.sRGBEncoding;
     cubieTexture.minFilter = THREE.NearestFilter;
-    cubieTexture.magFilter = THREE.NearestFilter;   
+    cubieTexture.magFilter = THREE.NearestFilter;
     cubieTexture.wrapS = THREE.ClampToEdgeWrapping;
     cubieTexture.wrapT = THREE.ClampToEdgeWrapping;
     // Mapping: right:0, left:1, top:2, bottom:3, front:4, back:5
@@ -627,12 +624,22 @@ function paintBody(imageUrl) {
 
 export function scrambleCube() {
     const faces = ['front', 'back', 'left', 'right', 'top', 'bottom'];
-    while (checkCubeSolved())
-        for (let i = 0; i < difficulty; i++) {
-            const randomFace = faces[Math.floor(Math.random() * faces.length)];
-            const randomAngle = Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2;
-            rotateFace(randomFace, randomAngle, Math.random() * Math.floor(numPerAxis / 2) + 1);
+//    while (checkCubeSolved()){
+    let i = 0;
+//        for (let i = 0; i < difficulty; i++) {
+    setTimeout(function twist(){
+        const randomFace = faces[Math.floor(Math.random() * faces.length)];
+        const randomAngle = Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2;
+        rotateFace(randomFace, randomAngle, Math.random() * Math.floor(numPerAxis / 2) + 1);
+        i += 1;
+        if (i < difficulty)
+            setTimeout(twist, 500);
+        else if (checkCubeSolved()) {
+            i = 0;
+            setTimeout(twist, 500);
         }
+    }, 500);
+//    }
 }
 
 // Format seconds as MM:SS

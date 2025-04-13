@@ -63,6 +63,7 @@ export let gap = 0.05;
 // Change this value between 2 and 9 as desired.
 export let numPerAxis = 5;
 export const getOffset = () => ((numPerAxis - 1) * (cubieSize + gap)) / 2;
+export const initialTransforms = new Map(); // Map piece object -> { position: Vector3, quaternion: Quaternion }
 
 // Helper function to check if an index is in the center region 
 function isCenter(index) {
@@ -87,7 +88,7 @@ function buildCube() {
             }
         }
     }
-    
+    initialTransforms.clear();
     // Recalculate offset based on updated numPerAxis
     const currentOffset = getOffset();
     const colors = ['#00ff00',
@@ -135,6 +136,9 @@ function buildCube() {
                 // Store the grid indices so we can update positions later
                 cubie.userData = { i, j, k };
                 bixieCube.add(cubie);
+                const initialPos = new THREE.Vector3();
+                const initialQuat = new THREE.Quaternion();
+initialTransforms.set(cubie, { position: initialPos.clone(), quaternion: initialQuat.clone() });
             }
         }
     }
