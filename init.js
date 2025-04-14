@@ -231,7 +231,7 @@ popover.classList.add('popover');
 popover.style.top = '60px';
 popover.style.left = '20px';
 popover.style.display = 'none';  // <-- Initialize as hidden
-popover.innerHTML = `<h1><a href="/" target="_blank">Home</a>
+popover.innerHTML = `<h1><a href=//comptune.com" target="_blank">Home</a>
 PC and Electronic Repair
 </h1>
 <h3>Unlock Premium</h3>
@@ -239,26 +239,26 @@ PC and Electronic Repair
 <p>Gain exclusive access and support the development of BixieCube by becoming a Premium Member.</p>
 
 
-        <a href="/tetra/">
-          <img class="sq" src="/images/64/tetra.webp">
+        <a href=//comptune.com/tetra/">
+          <img class="sq" src=//comptune.com/images/64/tetra.webp">
 
-        <a href="/cube/">
-          <img class="sq" src="/images/64/cube.webp"></a>
+        <a href=//comptune.com/cube/">
+          <img class="sq" src=//comptune.com/images/64/cube.webp"></a>
 
-        <a href="/slider.html">
-          <img class="sq" src="/images/64/birthday.webp"></a>
+        <a href=//comptune.com/slider.html">
+          <img class="sq" src=//comptune.com/images/64/birthday.webp"></a>
 
-        <a href="/minvaders/default.html">
-          <img class="sq" src="/images/64/minvaders.jpg"></a>
+        <a href=//comptune.com/minvaders/default.html">
+          <img class="sq" src=//comptune.com/images/64/minvaders.jpg"></a>
 
         <a href="//thenerdshow.com/blackjack.html">
-          <img class="sq" src="/images/64/blackjack.gif"></a>
+          <img class="sq" src=//comptune.com/images/64/blackjack.gif"></a>
 
         <a href="//thenerdshow.com/crossword.html">
-          <img class="sq" src="/images/64/crossword.gif"></a>
+          <img class="sq" src=//comptune.com/images/64/crossword.gif"></a>
 
         <a href="//thenerdshow.com/wordsearch.html">
-          <img class="sq" src="/images/64/wordsearch.webp"></a>
+          <img class="sq" src=//comptune.com/images/64/wordsearch.webp"></a>
 
 <ul>
 <li>BixieCube <a href="https://github.com/themanyone/BixieCube"><span>project on GitHub</span></a></li>
