@@ -482,12 +482,15 @@ function dragFace(event){
 renderer.domElement.addEventListener('mousemove', dragFace);
 renderer.domElement.addEventListener('touchmove', dragFace);
 
-// Add drop event handlers and helper function to paint a face with a dropped image
-
+// Add drop event handlers and helper function to paint a face
+renderer.domElement.addEventListener('dragenter', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+});
 renderer.domElement.addEventListener('dragover', (event) => {
     event.preventDefault();
+    event.stopPropagation();
 });
-
 renderer.domElement.addEventListener('drop', (event) => {
     event.preventDefault();
     if (event.dataTransfer.files.length === 0) return;
@@ -624,22 +627,17 @@ function paintBody(imageUrl) {
 
 export function scrambleCube() {
     const faces = ['front', 'back', 'left', 'right', 'top', 'bottom'];
-//    while (checkCubeSolved()){
+    isUndoing = true;
     let i = 0;
-//        for (let i = 0; i < difficulty; i++) {
     setTimeout(function twist(){
         const randomFace = faces[Math.floor(Math.random() * faces.length)];
         const randomAngle = Math.random() < 0.5 ? Math.PI / 2 : -Math.PI / 2;
         rotateFace(randomFace, randomAngle, Math.random() * Math.floor(numPerAxis / 2) + 1);
         i += 1;
-        if (i < difficulty)
-            setTimeout(twist, 500);
-        else if (checkCubeSolved()) {
-            i = 0;
-            setTimeout(twist, 500);
-        }
+        if (checkCubeSolved()) i = 0;
+        if (i < difficulty) setTimeout(twist, 500);
     }, 500);
-//    }
+    isUndoing = false;
 }
 
 // Format seconds as MM:SS

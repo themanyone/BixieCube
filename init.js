@@ -238,6 +238,28 @@ PC and Electronic Repair
 
 <p>Gain exclusive access and support the development of BixieCube by becoming a Premium Member.</p>
 
+
+        <a href="/tetra/">
+          <img class="sq" src="/images/64/tetra.webp">
+
+        <a href="/cube/">
+          <img class="sq" src="/images/64/cube.webp"></a>
+
+        <a href="/slider.html">
+          <img class="sq" src="/images/64/birthday.webp"></a>
+
+        <a href="/minvaders/default.html">
+          <img class="sq" src="/images/64/minvaders.jpg"></a>
+
+        <a href="//thenerdshow.com/blackjack.html">
+          <img class="sq" src="/images/64/blackjack.gif"></a>
+
+        <a href="//thenerdshow.com/crossword.html">
+          <img class="sq" src="/images/64/crossword.gif"></a>
+
+        <a href="//thenerdshow.com/wordsearch.html">
+          <img class="sq" src="/images/64/wordsearch.webp"></a>
+
 <ul>
 <li>BixieCube <a href="https://github.com/themanyone/BixieCube"><span>project on GitHub</span></a></li>
 <li>YouTube <a href="https://www.youtube.com/themanyone"><span>https://www.youtube.com/themanyone</span></a></li>
